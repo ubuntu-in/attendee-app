@@ -1,37 +1,46 @@
-const CACHE_NAME = 'ubucon-india-2026-v1';
+/**
+ * @file sw.js
+ * @description Custom Service Worker for UbuCon India 2026 PWA.
+ * Implements a Stale-While-Revalidate and Cache-First strategy to ensure
+ * immediate load times while keeping content fresh in the background.
+ * Essential for providing a robust offline experience in low-connectivity areas.
+ */
+const CACHE_NAME = 'ubucon-india-2026-v2';
 
+// Core assets to pre-cache immediately upon SW installation.
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
-  // Will add other assets dynamically as we build
 ];
 
-// Install Event
+// Install Event: Precaches essential shell assets.
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('Opened cache');
+      console.log('[ServiceWorker] Pre-caching core assets');
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
+  // Force the waiting service worker to become the active service worker.
   self.skipWaiting();
 });
 
-// Activate Event
+// Activate Event: Clears out old caches when a new version of the SW takes over.
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache', cacheName);
+            console.log('[ServiceWorker] Purging old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     })
   );
+  // Ensure the SW takes control of all clients immediately.
   self.clients.claim();
 });
 

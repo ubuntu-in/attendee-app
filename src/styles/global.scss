@@ -10,10 +10,17 @@ $color-positive: #38B44A;
 $color-dark: #111111;
 $color-light: #FFFFFF;
 
+// Prevent Vanilla Framework from loading external Google Fonts for strict offline support
+$import-fonts: false;
+
+// Increase the size of the navigation logo and its tag wrapper
+$navigation-logo-size: 2.5rem;
+$navigation-logo-tag-width: 3rem;
+
 // Important: strictly no custom CSS classes following the instructions!
 // We only configure the framework's variables.
 
-// Import Vanilla Framework
+// Import Vanilla Framework core
 @import 'vanilla-framework';
 
 // Initialize all vanilla framework components
