@@ -1,0 +1,20 @@
+// Ubuntu Color Palette Overrides
+// Accent (Ubuntu Orange)
+$color-brand: #E95420;
+$color-accent: #E95420;
+// Aubergine
+$color-primary: #772953;
+// Green (Buttons/Success)
+$color-positive: #38B44A;
+// Black and White
+$color-dark: #111111;
+$color-light: #FFFFFF;
+
+// Important: strictly no custom CSS classes following the instructions!
+// We only configure the framework's variables.
+
+// Import Vanilla Framework
+@import 'vanilla-framework';
+
+// Initialize all vanilla framework components
+@include vanilla;

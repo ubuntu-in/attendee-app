@@ -14,7 +14,9 @@
   "dependencies": {
     "@astrojs/svelte": "^9.0.1",
     "astro": "^7.1.6",
+    "sass": "^1.102.0",
     "svelte": "^5.56.8",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vanilla-framework": "^4.55.1"
   }
 }
