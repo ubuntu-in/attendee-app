@@ -2,14 +2,138 @@
 /**
  * @file ticket.astro
  * @description The ticket page for the UbuCon India 2026 Attendee App.
- * Implementation pending user instructions.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Ticket">
-  <div class="col-12">
-    <h1>Your Ticket</h1>
-    <p>Ticket implementation coming soon...</p>
-  </div>
+<BaseLayout title="My Ticket">
+  <section class="p-strip">
+    <div class="row">
+      <div class="col-12 u-align-text--center">
+        
+        <!-- Hero Graphic (Aubergine Ticket SVG) -->
+        <div style="position: relative; display: inline-block; margin-bottom: 2rem;">
+          <svg width="180" height="240" viewBox="0 0 150 200" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+            <defs>
+              <!-- Background Gradient -->
+              <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#E95420" /> <!-- Ubuntu Orange -->
+                <stop offset="100%" stop-color="#772953" /> <!-- Aubergine -->
+              </linearGradient>
+              
+              <!-- Glossy Highlight Gradient (Sharp cutoff at 50% for perfect symmetry) -->
+              <linearGradient id="glossGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3"/>
+                <stop offset="49.9%" stop-color="#ffffff" stop-opacity="0.05"/>
+                <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+              </linearGradient>
+
+              <!-- Colored Drop Shadow for the Ticket -->
+              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="15" stdDeviation="15" flood-color="#772953" flood-opacity="0.3" />
+              </filter>
+            </defs>
+
+            <!-- Main Ticket Body (Perfectly Symmetrical Cutouts at y=88 to y=112) -->
+            <path d="M 45,0 L 105,0 Q 125,0 125,20 L 125,88 A 12,12 0 0 0 125,112 L 125,180 Q 125,200 105,200 L 45,200 Q 25,200 25,180 L 25,112 A 12,12 0 0 0 25,88 L 25,20 Q 25,0 45,0 Z" fill="url(#bgGrad)" filter="url(#shadow)" />
+            
+            <!-- Glossy Overlay -->
+            <path d="M 45,0 L 105,0 Q 125,0 125,20 L 125,88 A 12,12 0 0 0 125,112 L 125,180 Q 125,200 105,200 L 45,200 Q 25,200 25,180 L 25,112 A 12,12 0 0 0 25,88 L 25,20 Q 25,0 45,0 Z" fill="url(#glossGrad)" />
+
+            <!-- White Square Box (Centered in bottom half) -->
+            <rect x="52" y="130" width="46" height="46" rx="6" fill="#FFFFFF" />
+            <rect x="58" y="136" width="34" height="34" rx="3" fill="#f4f4f4" /> <!-- Inner depth for QR placeholder -->
+
+            <!-- Attendee Picture Placeholder -->
+            <g opacity="0.9">
+              <circle cx="50" cy="55" r="14" fill="#ffffff" fill-opacity="0.3" />
+              <!-- Person Silhouette -->
+              <circle cx="50" cy="52" r="4" fill="#ffffff" fill-opacity="0.8" />
+              <path d="M 42,63 Q 42,56 50,56 Q 58,56 58,63" fill="none" stroke="#ffffff" stroke-opacity="0.8" stroke-width="2.5" stroke-linecap="round" />
+            </g>
+
+            <!-- Translucent Horizontal Lines (Shifted down next to picture) -->
+            <rect x="72" y="47" width="38" height="5" rx="2.5" fill="#ffffff" fill-opacity="0.9" />
+            <rect x="72" y="57" width="24" height="5" rx="2.5" fill="#ffffff" fill-opacity="0.6" />
+            
+            <!-- Dashed Perforation Line (Exactly dead center at y=100) -->
+            <line x1="42" y1="100" x2="108" y2="100" stroke="#ffffff" stroke-width="3" stroke-dasharray="6,6" stroke-opacity="0.5" />
+            
+            <!-- Floating Orange Badge -->
+            <g transform="translate(105, -15)">
+              <!-- Badge Shadow -->
+              <path d="M 5,0 L 25,0 Q 30,0 30,5 L 30,9 A 4,4 0 0 0 30,17 L 30,21 Q 30,26 25,26 L 5,26 Q 0,26 0,21 L 0,17 A 4,4 0 0 0 0,9 L 0,5 Q 0,0 5,0 Z" fill="#000" opacity="0.1" transform="translate(0, 5)" />
+              <!-- Badge Body -->
+              <path d="M 5,0 L 25,0 Q 30,0 30,5 L 30,9 A 4,4 0 0 0 30,17 L 30,21 Q 30,26 25,26 L 5,26 Q 0,26 0,21 L 0,17 A 4,4 0 0 0 0,9 L 0,5 Q 0,0 5,0 Z" fill="#FFFFFF" stroke="#E95420" stroke-width="2.5" />
+              <circle cx="15" cy="7" r="2.5" fill="#E95420" />
+              <circle cx="15" cy="13" r="2.5" fill="#E95420" />
+              <circle cx="15" cy="19" r="2.5" fill="#E95420" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- Empty State Typography -->
+        <h2 class="p-heading--3 u-no-margin--bottom">No ticket added yet</h2>
+        <p class="p-heading--5 u-text--muted u-sv1">
+          Your digital pass will appear here<br>once you scan or upload it.
+        </p>
+
+        <!-- Scan Button -->
+        <button class="p-button--brand" style="width: 100%; max-width: 360px; margin-top: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="5" height="5" rx="1"></rect>
+            <rect x="16" y="3" width="5" height="5" rx="1"></rect>
+            <rect x="3" y="16" width="5" height="5" rx="1"></rect>
+            <path d="M21 16v5h-5"></path>
+            <path d="M8 12h8"></path>
+            <path d="M12 8v8"></path>
+          </svg>
+          Scan or Upload Ticket
+        </button>
+
+        <!-- How it works accordion -->
+        <div style="max-width: 360px; margin: 2rem auto 0; text-align: left;">
+          <aside class="p-accordion">
+            <ul class="p-accordion__list">
+              <li class="p-accordion__group">
+                <button class="p-accordion__tab" type="button" aria-controls="how-it-works" aria-expanded="false">
+                  How it works
+                </button>
+                <section class="p-accordion__panel" id="how-it-works" aria-hidden="true">
+                  <ol>
+                    <li>Open your registration confirmation email.</li>
+                    <li>Save the QR code image to your device.</li>
+                    <li>Tap <strong>Scan or Upload Ticket</strong> above.</li>
+                    <li>Your ticket will be securely saved offline.</li>
+                  </ol>
+                </section>
+              </li>
+            </ul>
+          </aside>
+        </div>
+
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<!-- Client-side script for Accordion toggle logic compatible with Astro ViewTransitions -->
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const tab = document.querySelector('.p-accordion__tab');
+    const panel = document.querySelector('.p-accordion__panel');
+    
+    if (tab && panel) {
+      // Clone node to safely remove any old listeners on navigation
+      const newTab = tab.cloneNode(true) as HTMLButtonElement;
+      tab.parentNode?.replaceChild(newTab, tab);
+      
+      newTab.addEventListener('click', () => {
+        const isExpanded = newTab.getAttribute('aria-expanded') === 'true';
+        newTab.setAttribute('aria-expanded', String(!isExpanded));
+        panel.setAttribute('aria-hidden', String(isExpanded));
+      });
+    }
+  });
+</script>
