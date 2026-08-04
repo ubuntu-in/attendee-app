@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "check": "astro check",
     "astro": "astro"
   },
   "dependencies": {
@@ -18,5 +19,8 @@
     "svelte": "^5.56.8",
     "typescript": "^6.0.3",
     "vanilla-framework": "^4.55.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10"
   }
 }
