@@ -11,6 +11,12 @@ export default defineConfig({
     baseURL: 'http://localhost:4322',
     trace: 'on-first-retry',
   },
+  webServer: {
+    command: 'npm run build && npx astro preview --port 4322',
+    port: 4322,
+    reuseExistingServer: !process.env.CI,
+    timeout: 60_000,
+  },
   projects: [
     {
       name: 'chromium',

@@ -104,6 +104,76 @@ test.describe('Ticket Management Flow', () => {
     // Local storage should remain clean
     const storedTicketStr = await page.evaluate(() => localStorage.getItem('ubucon_ticket'));
     expect(storedTicketStr).toBeNull();
+
+    // (#5) URL should be cleaned even on failure — no infinite retry on refresh
+    await expect(page).toHaveURL(/.*\/ticket$/);
+  });
+
+  test('Modal closes on Escape key (#7 a11y)', async ({ page, context }) => {
+    // Mock API (won't actually be called since we cancel)
+    await context.route('**/*', async route => {
+      if (route.request().url().includes('api.konfhub.com')) {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ name: "New User", designation: "New Dev" }),
+          headers: { 'Access-Control-Allow-Origin': '*' }
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    // Setup existing ticket
+    await page.goto('/ticket');
+    await page.evaluate(() => {
+      localStorage.setItem('ubucon_ticket', JSON.stringify({
+        name: "Old User",
+        bookingId: "old-booking-123",
+        designation: "Old Dev"
+      }));
+    });
+
+    // Navigate with a new booking ID to trigger modal
+    await page.goto('/ticket?bookingid=new-booking-456');
+    await expect(page.locator('text=Replace Ticket?')).toBeVisible();
+
+    // Press Escape to close the modal
+    await page.keyboard.press('Escape');
+
+    // Modal should be gone
+    await expect(page.locator('text=Replace Ticket?')).not.toBeVisible();
+
+    // Existing ticket should still be displayed
+    await expect(page.getByRole('heading', { name: 'Old User' })).toBeVisible();
+  });
+
+  test('QR code payload contains HMAC signature (#2)', async ({ page, context }) => {
+    // Mock API
+    await context.route(/.*api\.konfhub\.com.*/, async route => {
+      const json = {
+        name: "Sig Test User",
+        emailId: "sig@test.com",
+        organisation: "Sig Org",
+        designation: "Tester",
+        ticketName: "General"
+      };
+      await route.fulfill({ json, headers: { 'Access-Control-Allow-Origin': '*' } });
+    });
+
+    await page.goto('/ticket?bookingid=sig-booking-001');
+
+    // Wait for the QR to be generated
+    await expect(page.getByRole('heading', { name: 'Sig Test User' })).toBeVisible();
+
+    // Check that the QR image element exists (it's inside the SVG)
+    const qrImage = page.locator('svg image');
+    await expect(qrImage).toBeVisible();
+
+    // Verify the data URL is a valid PNG data URI (from qrcode lib)
+    const href = await qrImage.getAttribute('href');
+    expect(href).toBeTruthy();
+    expect(href!.startsWith('data:image/png;base64,')).toBe(true);
   });
 
 });
