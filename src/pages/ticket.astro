@@ -11,6 +11,14 @@ const eventId = import.meta.env.PUBLIC_EVENT_ID;
 if (!eventId) {
   throw new Error('PUBLIC_EVENT_ID environment variable is missing. Check your .env file.');
 }
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+if (!UUID_RE.test(eventId)) {
+  throw new Error(
+    `PUBLIC_EVENT_ID is not a valid UUID: "${eventId}". ` +
+    'Expected format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+  );
+}
 ---
 
 <BaseLayout title="My Ticket">
