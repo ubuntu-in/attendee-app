@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import QRCode from 'qrcode';
 
   export let eventId: string;
@@ -10,6 +10,8 @@
   let qrCodeDataUrl: string | null = null;
   let isFetching = false;
   let errorMsg: string | null = null;
+  let modalDialogEl: HTMLDivElement | null = null;
+  let previouslyFocusedEl: HTMLElement | null = null;
 
   onMount(async () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -27,8 +29,8 @@
     if (newBookingIdFromUrl) {
       if (localTicket) {
         // Ask to replace if they already have one
-        showReplaceModal = true;
         await generateQR(localTicket);
+        await openModal();
       } else {
         // No existing ticket, just fetch and save
         await fetchAndSaveTicket(newBookingIdFromUrl);
@@ -77,6 +79,7 @@
 
   async function replaceTicket() {
     showReplaceModal = false;
+    restoreFocus();
     if (newBookingIdFromUrl) {
       localStorage.removeItem('ubucon_ticket');
       await fetchAndSaveTicket(newBookingIdFromUrl);
@@ -86,8 +89,48 @@
   function cancelReplace() {
     showReplaceModal = false;
     cleanUrl();
+    restoreFocus();
     if (localTicket) {
       generateQR(localTicket);
+    }
+  }
+
+  // ── Modal Focus Management (a11y) ────────────────────────
+  async function openModal() {
+    previouslyFocusedEl = document.activeElement as HTMLElement | null;
+    showReplaceModal = true;
+    await tick();
+    // Focus the first focusable element inside the dialog
+    const firstBtn = modalDialogEl?.querySelector('button') as HTMLElement | null;
+    firstBtn?.focus();
+  }
+
+  function restoreFocus() {
+    previouslyFocusedEl?.focus();
+    previouslyFocusedEl = null;
+  }
+
+  function handleModalKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      cancelReplace();
+      return;
+    }
+    // Focus trap: cycle Tab between the two modal buttons
+    if (e.key === 'Tab' && modalDialogEl) {
+      const focusable = Array.from(
+        modalDialogEl.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   }
 
@@ -204,8 +247,9 @@
 
   <!-- Vanilla Framework Modal -->
   {#if showReplaceModal}
-    <div class="p-modal" id="modal" style="display: flex;">
-      <div class="p-modal__dialog" role="dialog" aria-labelledby="modal-title" aria-describedby="modal-description">
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="p-modal" id="modal" style="display: flex;" on:keydown={handleModalKeydown}>
+      <div class="p-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description" bind:this={modalDialogEl}>
         <header class="p-modal__header">
           <h2 class="p-modal__title" id="modal-title">Replace Ticket?</h2>
         </header>
