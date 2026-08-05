@@ -3,14 +3,14 @@
  * @file ticket.astro
  * @description The ticket page for the UbuCon India 2026 Attendee App.
  */
-import fs from 'node:fs';
-import * as yaml from 'js-yaml';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TicketManager from '../components/TicketManager.svelte';
 
-const fileContents = fs.readFileSync('config.yaml', 'utf8');
-const config = yaml.load(fileContents) as any;
-const eventId = config.eventId;
+const eventId = import.meta.env.PUBLIC_EVENT_ID;
+
+if (!eventId) {
+  throw new Error('PUBLIC_EVENT_ID environment variable is missing. Check your .env file.');
+}
 ---
 
 <BaseLayout title="My Ticket">
@@ -18,7 +18,7 @@ const eventId = config.eventId;
     <div class="row">
       <div class="col-12 u-align-text--center">
         
-        <TicketManager eventId={eventId} client:only="svelte" />
+        <TicketManager eventId={eventId} client:load />
 
         <!-- How it works accordion -->
         <div style="max-width: 360px; margin: 2rem auto 0; text-align: left;">
