@@ -3,7 +3,6 @@
   import QRCode from 'qrcode';
 
   export let eventId: string;
-  export let hmacSecret: string;
 
   let localTicket: any = null;
   let showReplaceModal = false;
@@ -47,24 +46,29 @@
     errorMsg = null;
     try {
       const res = await fetch(
-        `https://api.konfhub.com/integration/validate?validateBy=${bookingId}&eventId=${eventId}`,
+        `https://api.konfhub.com/integration/validate?validateBy=${encodeURIComponent(bookingId)}&eventId=${eventId}`,
         { signal: AbortSignal.timeout(15_000) }
       );
       if (!res.ok) throw new Error('Failed to validate ticket');
       const data = await res.json();
-      
-      // Store the booking ID alongside the fetched data
+
+      // Guard: ensure the response contains a valid name before saving
+      if (!data?.name || typeof data.name !== 'string' || data.name.trim() === '') {
+        throw new Error('Invalid ticket data received from server.');
+      }
+
+      // Store the booking ID alongside the fetched data — only on success
       const ticketToSave = { ...data, bookingId };
-      
+
       localStorage.setItem('ubucon_ticket', JSON.stringify(ticketToSave));
       localTicket = ticketToSave;
-      
+
       await generateQR(localTicket);
     } catch (e: any) {
       if (e?.name === 'TimeoutError') {
         errorMsg = 'Request timed out. Please check your connection and try again.';
       } else {
-        errorMsg = 'Could not fetch ticket details. Please ensure the link is valid.';
+        errorMsg = e?.message ?? 'Could not fetch ticket details. Please ensure the link is valid.';
       }
     } finally {
       isFetching = false;
@@ -82,7 +86,8 @@
     showReplaceModal = false;
     restoreFocus();
     if (newBookingIdFromUrl) {
-      localStorage.removeItem('ubucon_ticket');
+      // [B-1] Do NOT remove localStorage here — fetchAndSaveTicket() will overwrite
+      // only after a successful HTTP 200 OK response with valid data.
       await fetchAndSaveTicket(newBookingIdFromUrl);
     }
   }
@@ -111,12 +116,16 @@
     previouslyFocusedEl = null;
   }
 
-  function handleModalKeydown(e: KeyboardEvent) {
-    if (e.key === 'Escape') {
+  // ── [C-4] Global Escape key handler on svelte:window ─────
+  // Catches Escape regardless of where focus currently sits.
+  function handleWindowKeydown(e: KeyboardEvent) {
+    if (showReplaceModal && e.key === 'Escape') {
       e.preventDefault();
       cancelReplace();
-      return;
     }
+  }
+
+  function handleModalKeydown(e: KeyboardEvent) {
     // Focus trap: cycle Tab between the two modal buttons
     if (e.key === 'Tab' && modalDialogEl) {
       const focusable = Array.from(
@@ -135,31 +144,21 @@
     }
   }
 
-  // ── HMAC-SHA256 Signing (anti-spoofing) ──────────────────
-  async function computeHmac(message: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const keyData = encoder.encode(hmacSecret);
-    const key = await crypto.subtle.importKey(
-      'raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
-    );
-    const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(message));
-    return Array.from(new Uint8Array(sig))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-  }
-
+  // ── [B-4] QR Generation — KonfHub wire format ────────────
+  // Format: id:<booking_id>|n:<name>|eid:<event_id>
+  // No HMAC signing: PUBLIC_ vars are bundled into client JS; signing provides no security.
+  // Venue check-in scanners require the exact `eid:` key (not `eventId:`).
   async function generateQR(ticket: any) {
-    // Format: id:<booking_id>|n:<name>|eventId:<event_id>|sig:<hmac_hex>
-    const payload = `id:${ticket.bookingId}|n:${ticket.name}|eventId:${eventId}`;
+    const payload = `id:${ticket.bookingId}|n:${ticket.name}|eid:${eventId}`;
     try {
-      const sig = await computeHmac(payload);
-      const qrString = `${payload}|sig:${sig}`;
-      qrCodeDataUrl = await QRCode.toDataURL(qrString, { width: 140, margin: 1, scale: 4 });
+      qrCodeDataUrl = await QRCode.toDataURL(payload, { width: 140, margin: 1, scale: 4 });
     } catch (err) {
       console.error('Failed to generate QR', err);
     }
   }
 </script>
+
+<svelte:window on:keydown={handleWindowKeydown} />
 
 <div class="ticket-manager" style="display: flex; flex-direction: column; align-items: center;">
   {#if errorMsg}
