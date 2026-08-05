@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import * as path from 'path';
 
 test.describe('Ticket Management Flow', () => {
 
@@ -86,6 +87,40 @@ test.describe('Ticket Management Flow', () => {
     expect(updatedTicket.bookingId).toBe('new-booking-456');
   });
 
+  test('Old ticket is preserved in localStorage when replace fetch fails', async ({ page, context }) => {
+    // 1. Set up an existing ticket in localStorage
+    await page.goto('/ticket');
+    await page.evaluate(() => {
+      localStorage.setItem('ubucon_ticket', JSON.stringify({
+        name: "Old User",
+        bookingId: "old-booking-123",
+        designation: "Old Dev"
+      }));
+    });
+
+    // 2. Mock the API to return a 500 error for the replacement fetch
+    await context.route(/.*api\.konfhub\.com.*/, async route => {
+      await route.fulfill({ status: 500, body: 'Server Error', headers: { 'Access-Control-Allow-Origin': '*' } });
+    });
+
+    // 3. Navigate with a new booking ID to trigger the replace modal
+    await page.goto('/ticket?bookingid=new-booking-fail');
+    await expect(page.locator('text=Replace Ticket?')).toBeVisible();
+
+    // 4. Click "Replace Ticket" — fetch will fail
+    await page.getByRole('button', { name: 'Replace Ticket' }).click();
+
+    // 5. An error message should appear
+    await expect(page.locator('.p-notification--negative')).toBeVisible({ timeout: 5000 });
+
+    // 6. [B-1] The OLD ticket must still be in localStorage — data must NOT be lost
+    const storedTicketStr = await page.evaluate(() => localStorage.getItem('ubucon_ticket'));
+    expect(storedTicketStr).toBeTruthy();
+    const storedTicket = JSON.parse(storedTicketStr!);
+    expect(storedTicket.name).toBe('Old User');
+    expect(storedTicket.bookingId).toBe('old-booking-123');
+  });
+
   test('Error state is handled robustly on API failure', async ({ page, context }) => {
     // Intercept and return a 404 error
     await context.route(/.*api\.konfhub\.com.*/, async route => {
@@ -96,7 +131,7 @@ test.describe('Ticket Management Flow', () => {
     await page.goto('/ticket?bookingid=invalid-booking-id');
 
     // Should display the error notification banner
-    await expect(page.locator('text=Could not fetch ticket details. Please ensure the link is valid.')).toBeVisible();
+    await expect(page.locator('.p-notification--negative')).toBeVisible();
     
     // Should still show the empty state because ticket fetch failed
     await expect(page.locator('text=No ticket added yet')).toBeVisible();
@@ -148,32 +183,64 @@ test.describe('Ticket Management Flow', () => {
     await expect(page.getByRole('heading', { name: 'Old User' })).toBeVisible();
   });
 
-  test('QR code payload contains HMAC signature (#2)', async ({ page, context }) => {
+  test('QR code payload matches KonfHub wire format (id|n|eid)', async ({ page, context }) => {
+    const bookingId = 'qr-format-test-001';
+    const attendeeName = 'QR Format User';
+
     // Mock API
     await context.route(/.*api\.konfhub\.com.*/, async route => {
       const json = {
-        name: "Sig Test User",
-        emailId: "sig@test.com",
-        organisation: "Sig Org",
+        name: attendeeName,
+        emailId: "qr@test.com",
+        organisation: "Format Org",
         designation: "Tester",
         ticketName: "General"
       };
       await route.fulfill({ json, headers: { 'Access-Control-Allow-Origin': '*' } });
     });
 
-    await page.goto('/ticket?bookingid=sig-booking-001');
+    await page.goto(`/ticket?bookingid=${bookingId}`);
 
-    // Wait for the QR to be generated
-    await expect(page.getByRole('heading', { name: 'Sig Test User' })).toBeVisible();
+    // Wait for the ticket heading to confirm QR was generated
+    await expect(page.getByRole('heading', { name: attendeeName })).toBeVisible();
 
-    // Check that the QR image element exists (it's inside the SVG)
-    const qrImage = page.locator('svg image');
-    await expect(qrImage).toBeVisible();
+    // Get the base64 PNG data URL from the SVG <image> element
+    const qrDataUrl = await page.locator('svg image').getAttribute('href');
+    expect(qrDataUrl).toBeTruthy();
+    expect(qrDataUrl!.startsWith('data:image/png;base64,')).toBe(true);
 
-    // Verify the data URL is a valid PNG data URI (from qrcode lib)
-    const href = await qrImage.getAttribute('href');
-    expect(href).toBeTruthy();
-    expect(href!.startsWith('data:image/png;base64,')).toBe(true);
+    // [S-2] Decode the QR code in the browser using jsqr injected from node_modules
+    const jsqrPath = path.resolve('node_modules/jsqr/dist/jsQR.js');
+    await page.addScriptTag({ path: jsqrPath });
+
+    const decodedPayload = await page.evaluate(async (dataUrl: string) => {
+      return new Promise<string | null>((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d')!;
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          // @ts-ignore — jsQR is injected globally via addScriptTag
+          const result = jsQR(imageData.data, imageData.width, imageData.height);
+          resolve(result ? result.data : null);
+        };
+        img.src = dataUrl;
+      });
+    }, qrDataUrl!);
+
+    expect(decodedPayload).toBeTruthy();
+
+    // Assert the exact KonfHub wire format: id:<bookingId>|n:<name>|eid:<eventId>
+    // eid: must be present (not eventId:), and sig: must NOT be present
+    expect(decodedPayload).toMatch(/^id:[^|]+\|n:[^|]+\|eid:[^|]+$/);
+    expect(decodedPayload).toContain(`id:${bookingId}`);
+    expect(decodedPayload).toContain(`n:${attendeeName}`);
+    expect(decodedPayload).toContain('eid:');
+    expect(decodedPayload).not.toContain('eventId:');
+    expect(decodedPayload).not.toContain('sig:');
   });
 
 });
