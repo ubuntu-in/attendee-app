@@ -3,6 +3,7 @@
   import QRCode from 'qrcode';
 
   export let eventId: string;
+  export let hmacSecret: string;
 
   let localTicket: any = null;
   let showReplaceModal = false;
@@ -134,10 +135,25 @@
     }
   }
 
+  // ── HMAC-SHA256 Signing (anti-spoofing) ──────────────────
+  async function computeHmac(message: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(hmacSecret);
+    const key = await crypto.subtle.importKey(
+      'raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+    );
+    const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(message));
+    return Array.from(new Uint8Array(sig))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
   async function generateQR(ticket: any) {
-    // Format: id:<booking_id>|n:<name>|eventId:<event_id>
-    const qrString = `id:${ticket.bookingId}|n:${ticket.name}|eventId:${eventId}`;
+    // Format: id:<booking_id>|n:<name>|eventId:<event_id>|sig:<hmac_hex>
+    const payload = `id:${ticket.bookingId}|n:${ticket.name}|eventId:${eventId}`;
     try {
+      const sig = await computeHmac(payload);
+      const qrString = `${payload}|sig:${sig}`;
       qrCodeDataUrl = await QRCode.toDataURL(qrString, { width: 140, margin: 1, scale: 4 });
     } catch (err) {
       console.error('Failed to generate QR', err);
