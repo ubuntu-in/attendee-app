@@ -28,6 +28,7 @@
       if (localTicket) {
         // Ask to replace if they already have one
         showReplaceModal = true;
+        await generateQR(localTicket);
       } else {
         // No existing ticket, just fetch and save
         await fetchAndSaveTicket(newBookingIdFromUrl);
