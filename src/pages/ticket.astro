@@ -19,14 +19,6 @@ if (!UUID_RE.test(eventId)) {
     'Expected format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
   );
 }
-
-const hmacSecret = import.meta.env.PUBLIC_HMAC_SECRET;
-if (!hmacSecret || typeof hmacSecret !== 'string' || hmacSecret.length < 16) {
-  throw new Error(
-    'PUBLIC_HMAC_SECRET environment variable is missing or too short (min 16 chars). '
-    + 'Check your .env file.'
-  );
-}
 ---
 
 <BaseLayout title="My Ticket">
@@ -34,7 +26,7 @@ if (!hmacSecret || typeof hmacSecret !== 'string' || hmacSecret.length < 16) {
     <div class="row">
       <div class="col-12 u-align-text--center">
         
-        <TicketManager eventId={eventId} hmacSecret={hmacSecret} client:load />
+        <TicketManager eventId={eventId} client:load />
 
         <!-- How it works accordion -->
         <div style="max-width: 360px; margin: 2rem auto 0; text-align: left;">
