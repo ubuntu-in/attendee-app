@@ -53,12 +53,12 @@
       localStorage.setItem('ubucon_ticket', JSON.stringify(ticketToSave));
       localTicket = ticketToSave;
       
-      cleanUrl();
       await generateQR(localTicket);
     } catch (e: any) {
       errorMsg = 'Could not fetch ticket details. Please ensure the link is valid.';
     } finally {
       isFetching = false;
+      cleanUrl();
     }
   }
 
