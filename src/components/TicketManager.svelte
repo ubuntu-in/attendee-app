@@ -43,7 +43,10 @@
     isFetching = true;
     errorMsg = null;
     try {
-      const res = await fetch(`https://api.konfhub.com/integration/validate?validateBy=${bookingId}&eventId=${eventId}`);
+      const res = await fetch(
+        `https://api.konfhub.com/integration/validate?validateBy=${bookingId}&eventId=${eventId}`,
+        { signal: AbortSignal.timeout(15_000) }
+      );
       if (!res.ok) throw new Error('Failed to validate ticket');
       const data = await res.json();
       
@@ -55,7 +58,11 @@
       
       await generateQR(localTicket);
     } catch (e: any) {
-      errorMsg = 'Could not fetch ticket details. Please ensure the link is valid.';
+      if (e?.name === 'TimeoutError') {
+        errorMsg = 'Request timed out. Please check your connection and try again.';
+      } else {
+        errorMsg = 'Could not fetch ticket details. Please ensure the link is valid.';
+      }
     } finally {
       isFetching = false;
       cleanUrl();
