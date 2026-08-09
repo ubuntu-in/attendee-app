@@ -2,14 +2,74 @@
 /**
  * @file ticket.astro
  * @description The ticket page for the UbuCon India 2026 Attendee App.
- * Implementation pending user instructions.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TicketManager from '../components/TicketManager.svelte';
+
+const eventId = import.meta.env.PUBLIC_EVENT_ID;
+
+if (!eventId) {
+  throw new Error('PUBLIC_EVENT_ID environment variable is missing. Check your .env file.');
+}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+if (!UUID_RE.test(eventId)) {
+  throw new Error(
+    `PUBLIC_EVENT_ID is not a valid UUID: "${eventId}". ` +
+    'Expected format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+  );
+}
 ---
 
-<BaseLayout title="Ticket">
-  <div class="col-12">
-    <h1>Your Ticket</h1>
-    <p>Ticket implementation coming soon...</p>
-  </div>
+<BaseLayout title="My Ticket">
+  <section class="p-strip">
+    <div class="row">
+      <div class="col-12 u-align-text--center">
+        
+        <TicketManager eventId={eventId} client:load />
+
+        <!-- How it works accordion -->
+        <div style="max-width: 360px; margin: 2rem auto 0; text-align: left;">
+          <aside class="p-accordion">
+            <ul class="p-accordion__list">
+              <li class="p-accordion__group">
+                <button class="p-accordion__tab" type="button" aria-controls="how-it-works" aria-expanded="false">
+                  How it works
+                </button>
+                <section class="p-accordion__panel" id="how-it-works" aria-hidden="true">
+                  <ol>
+                    <li>Open your registration confirmation email.</li>
+                    <li>Save the QR code image to your device.</li>
+                    <li>Tap <strong>Scan or Upload Ticket</strong> above.</li>
+                    <li>Your ticket will be securely saved offline.</li>
+                  </ol>
+                </section>
+              </li>
+            </ul>
+          </aside>
+        </div>
+
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<!-- Client-side script for Accordion toggle logic compatible with Astro ViewTransitions -->
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const tab = document.querySelector('.p-accordion__tab');
+    const panel = document.querySelector('.p-accordion__panel');
+    
+    if (tab && panel) {
+      // Clone node to safely remove any old listeners on navigation
+      const newTab = tab.cloneNode(true) as HTMLButtonElement;
+      tab.parentNode?.replaceChild(newTab, tab);
+      
+      newTab.addEventListener('click', () => {
+        const isExpanded = newTab.getAttribute('aria-expanded') === 'true';
+        newTab.setAttribute('aria-expanded', String(!isExpanded));
+        panel.setAttribute('aria-hidden', String(isExpanded));
+      });
+    }
+  });
+</script>
