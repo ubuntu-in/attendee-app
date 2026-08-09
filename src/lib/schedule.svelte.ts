@@ -24,7 +24,11 @@ class ScheduleStore {
       this.status = 'success';
     } catch (err) {
       if (loadGen !== this.loadGeneration) return;
-      this.errorMessage = err instanceof Error ? err.message : 'Failed to load schedule from Indico';
+      if (err instanceof Error && err.name === 'TimeoutError') {
+        this.errorMessage = 'Request timed out. Please check your connection and try again.';
+      } else {
+        this.errorMessage = err instanceof Error ? err.message : 'Failed to load schedule from Indico';
+      }
       this.status = 'error';
     }
   }

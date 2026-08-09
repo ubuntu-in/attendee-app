@@ -36,7 +36,7 @@ function speakerName(s: Record<string, unknown>): string {
 export async function fetchSchedule(eventId: number): Promise<IndicoSession[]> {
   const url = `${EVENT_CONFIG.indicoBaseUrl}/export/event/${eventId}.json?detail=contributions`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
   if (!res.ok) {
     throw new Error(`Failed to fetch schedule from Indico (HTTP ${res.status})`);
   }
