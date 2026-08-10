@@ -8,7 +8,79 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="Venue">
   <div class="col-12">
-    <h1>Venue Information</h1>
-    <p>Venue details coming soon...</p>
+
+    <div class="p-section--shallow">
+      <h1>Venue</h1>
+      <p class="p-heading--4">Join us in Bengaluru for two days of talks, workshops and community. Here's how to reach the venue.</p>
+    </div>
+  </div>
+
+  <div class="col-8">
+    <iframe src="https://maps.google.com/maps?q=BMS%20College%20of%20Engineering,%20Basavanagudi,%20Bengaluru&t=&z=16&ie=UTF8&iwloc=&output=embed" width="100%" height="400" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+  <div class="col-4">
+    <div class="p-card">
+      <div class="p-card__content">
+        <h3 class="p-heading--4">
+          <i class="p-icon--contextual-menu"></i>
+          BMS College of Engineering
+        </h3>
+        <p class="p-text--small">Bull Temple Rd, Basavanagudi, Bengaluru, Karnataka 560004</p>
+        <p><strong>14 - 15 November 2026</strong></p>
+        <a href="https://maps.app.goo.gl/hA8yA4n6mF2C4n7T9" target="_blank" rel="noopener noreferrer" class="p-button--positive is-dense">Get directions</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="p-section--shallow">
+      <h2>Getting there</h2>
+      <div class="p-accordion venue-accordion">
+        <div class="p-accordion__group">
+          <button type="button" class="p-accordion__tab" aria-expanded="true" aria-controls="accordion-metro">
+            By Metro
+          </button>
+          <section class="p-accordion__panel" id="accordion-metro" aria-hidden="false">
+            <p>The nearest metro station is National College (Green Line), ~1.9 km away. A short auto ride or 15-minute walk will get you to campus.</p>
+          </section>
+        </div>
+        <div class="p-accordion__group">
+          <button type="button" class="p-accordion__tab" aria-expanded="false" aria-controls="accordion-air">
+            By Air
+          </button>
+          <section class="p-accordion__panel" id="accordion-air" aria-hidden="true">
+            <p>Kempegowda International Airport (BLR) is ~40 km away. You can take a Vayu Vajra airport bus or a taxi directly to the venue.</p>
+          </section>
+        </div>
+        <div class="p-accordion__group">
+          <button type="button" class="p-accordion__tab" aria-expanded="false" aria-controls="accordion-train">
+            By Train
+          </button>
+          <section class="p-accordion__panel" id="accordion-train" aria-hidden="true">
+            <p>KSR Bengaluru City Railway Station (Majestic) is ~5 km away. From there, you can switch to the Green Line metro or take a taxi.</p>
+          </section>
+        </div>
+      </div>
+    </div>
   </div>
 </BaseLayout>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const accordions = document.querySelectorAll('.venue-accordion .p-accordion__tab');
+    accordions.forEach(tab => {
+      tab.onclick = () => {
+        const isExpanded = tab.getAttribute('aria-expanded') === 'true';
+        tab.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+        
+        const panelId = tab.getAttribute('aria-controls');
+        if (panelId) {
+          const panel = document.getElementById(panelId);
+          if (panel) {
+            panel.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
+          }
+        }
+      };
+    });
+  });
+</script>
