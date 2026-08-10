@@ -6,9 +6,79 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Home">
-  <div class="col-12">
-    <h1>Welcome to UbuCon India 2026</h1>
-    <p>The premier gathering of the Ubuntu community in India.</p>
+<BaseLayout title="Home" raw={true}>
+  <!-- Hero Section -->
+  <div class="p-strip--suru">
+    <div class="row">
+      <div class="col-8">
+        <h1 class="p-heading--1">UbuCon India 2026</h1>
+        <p class="p-heading--4">Your official guide and companion app for the premier Ubuntu gathering in Bengaluru. Everything you need, right in your pocket.</p>
+        <ul class="p-inline-list" style="margin-top: 1.5rem;">
+          <li class="p-inline-list__item">
+            <a href="/schedule" class="p-button--positive">View Schedule</a>
+          </li>
+          <li class="p-inline-list__item">
+            <a href="/ticket" class="p-button--brand">My Ticket</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Guide / Features -->
+  <div class="p-strip">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="p-heading--3">How to use this app</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <div class="p-card--highlighted">
+          <h3 class="p-heading--4">Plan Your Day</h3>
+          <p>Browse the full schedule of talks, workshops, and lightning rounds. Bookmark your favorite sessions so you don't miss anything.</p>
+          <a href="/schedule">Go to schedule &rsaquo;</a>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="p-card--highlighted">
+          <h3 class="p-heading--4">Fast Check-in</h3>
+          <p>Access your ticket QR code instantly. Show it at the registration desk for a seamless badge pickup experience.</p>
+          <a href="/ticket">View ticket &rsaquo;</a>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="p-card--highlighted">
+          <h3 class="p-heading--4">Find Your Way</h3>
+          <p>Lost? Check the venue maps to find rooms, food stalls, restrooms, and sponsor booths at BMS College of Engineering.</p>
+          <a href="/venue">Get directions &rsaquo;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Links / Dashboard -->
+  <div class="p-strip--light">
+    <div class="row">
+      <div class="col-8">
+        <div class="p-card">
+          <h3 class="p-heading--4">Event Dashboard</h3>
+          <p class="p-text--small">Stay tuned during the event!</p>
+          <hr />
+          <h4>Live Updates</h4>
+          <p>Once the event starts on Nov 14th, this section will automatically update to show you the <strong>Next Upcoming Session</strong> so you always know where to be.</p>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="p-card">
+          <h3 class="p-heading--4">Important Links</h3>
+          <ul class="p-list">
+            <li class="p-list__item"><a href="/conduct">Code of Conduct</a></li>
+            <li class="p-list__item"><a href="/sponsors">Our Sponsors</a></li>
+            <li class="p-list__item"><a href="https://t.me/ubuconindia" target="_blank">Join Telegram Group</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </BaseLayout>
