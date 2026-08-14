@@ -1,0 +1,51 @@
+---
+/**
+ * @file Base.astro
+ * @description The core layout wrapper for the PWA. 
+ * Provides the essential document structure, global navigation (Header), and Footer.
+ * Configured strictly with Canonical Vanilla Framework.
+ */
+import '../styles/global.scss';
+import { ClientRouter } from 'astro:transitions';
+import NavBar from '../components/NavBar.astro';
+import Footer from '../components/Footer.astro';
+import ServiceWorker from '../components/ServiceWorker.svelte';
+
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E95420" />
+    <title>{title} | UbuCon India 2026</title>
+    <!-- 
+      OPTIMIZATION: ClientRouter enables SPA-like instant navigation between pages.
+      It intercepts clicks and updates the DOM natively, avoiding full page reloads. 
+    -->
+    <ClientRouter />
+  </head>
+  <body>
+    <NavBar />
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="p-strip">
+      <div class="row">
+        <slot />
+      </div>
+    </main>
+
+    <!-- Global Footer -->
+    <Footer />
+
+    <ServiceWorker client:load />
+  </body>
+</html>

@@ -3,7 +3,7 @@
  * @file ticket.astro
  * @description The ticket page for the UbuCon India 2026 Attendee App.
  */
-import BaseLayout from '../layouts/BaseLayout.astro';
+import Base from '../layouts/Base.astro';
 import TicketManager from '../components/TicketManager.svelte';
 
 const eventId = import.meta.env.PUBLIC_EVENT_ID;
@@ -21,7 +21,7 @@ if (!UUID_RE.test(eventId)) {
 }
 ---
 
-<BaseLayout title="My Ticket">
+<Base title="My Ticket">
   <section class="p-strip">
     <div class="row">
       <div class="col-12 u-align-text--center">
@@ -52,7 +52,7 @@ if (!UUID_RE.test(eventId)) {
       </div>
     </div>
   </section>
-</BaseLayout>
+</Base>
 
 <!-- Client-side script for Accordion toggle logic compatible with Astro ViewTransitions -->
 <script>
