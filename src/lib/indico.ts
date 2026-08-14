@@ -34,11 +34,18 @@ function speakerName(s: Record<string, unknown>): string {
  * Fetches contributions from the Indico export API and normalises them.
  */
 export async function fetchSchedule(eventId: number): Promise<IndicoSession[]> {
-  const url = `${EVENT_CONFIG.indicoBaseUrl}/export/event/${eventId}.json?detail=contributions`;
+  const url = `/api/schedule`;
 
   const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
   if (!res.ok) {
-    throw new Error(`Failed to fetch schedule from Indico (HTTP ${res.status})`);
+    let message = `Failed to fetch schedule from Indico (HTTP ${res.status})`;
+    try {
+      const body = await res.json() as { error?: string };
+      if (body.error) message = body.error;
+    } catch {
+      // ignore malformed error body and keep the generic HTTP message
+    }
+    throw new Error(message);
   }
 
   const json = await res.json() as Record<string, unknown>;

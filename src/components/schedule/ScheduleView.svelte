@@ -101,7 +101,7 @@
 {:else if scheduleStore.status === 'success'}
   <nav class="p-tabs" aria-label="Conference days">
     <ul class="p-tabs__list" role="tablist">
-      {#each dayKeys as day, i}
+      {#each dayKeys as day, i (day)}
         <li class="p-tabs__item" role="presentation">
           <button
             id={`schedule-tab-${day}`}
