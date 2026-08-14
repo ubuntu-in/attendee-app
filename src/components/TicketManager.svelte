@@ -4,7 +4,7 @@
 
   export let eventId: string;
 
-  let localTicket: any = null;
+  let localTicket: Record<string, unknown> | null = null;
   let showReplaceModal = false;
   let newBookingIdFromUrl: string | null = null;
   let qrCodeDataUrl: string | null = null;
@@ -21,22 +21,22 @@
     if (storedTicket) {
       try {
         localTicket = JSON.parse(storedTicket);
-      } catch (e) {
+      } catch {
         localStorage.removeItem('ubucon_ticket');
       }
     }
 
     if (newBookingIdFromUrl) {
       if (localTicket) {
-        // Ask to replace if they already have one
+        // ask to replace if they already have one
         await generateQR(localTicket);
         await openModal();
       } else {
-        // No existing ticket, just fetch and save
+        // no existing ticket, just fetch and save
         await fetchAndSaveTicket(newBookingIdFromUrl);
       }
     } else if (localTicket) {
-      // Just render the existing ticket
+      // just render the existing ticket
       await generateQR(localTicket);
     }
   });
@@ -63,12 +63,12 @@
       localStorage.setItem('ubucon_ticket', JSON.stringify(ticketToSave));
       localTicket = ticketToSave;
 
-      await generateQR(localTicket);
-    } catch (e: any) {
-      if (e?.name === 'TimeoutError') {
+      await generateQR(localTicket!);
+    } catch (e: unknown) {
+      if (e instanceof Error && e.name === 'TimeoutError') {
         errorMsg = 'Request timed out. Please check your connection and try again.';
       } else {
-        errorMsg = e?.message ?? 'Could not fetch ticket details. Please ensure the link is valid.';
+        errorMsg = e instanceof Error ? e.message : 'Could not fetch ticket details. Please ensure the link is valid.';
       }
     } finally {
       isFetching = false;
@@ -148,7 +148,7 @@
   // Format: id:<booking_id>|n:<name>|eid:<event_id>
   // No HMAC signing: PUBLIC_ vars are bundled into client JS; signing provides no security.
   // Venue check-in scanners require the exact `eid:` key (not `eventId:`).
-  async function generateQR(ticket: any) {
+  async function generateQR(ticket: Record<string, unknown>) {
     const payload = `id:${ticket.bookingId}|n:${ticket.name}|eid:${eventId}`;
     try {
       qrCodeDataUrl = await QRCode.toDataURL(payload, { width: 140, margin: 1, scale: 4 });
