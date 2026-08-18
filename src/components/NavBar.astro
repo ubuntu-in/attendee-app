@@ -8,8 +8,10 @@ const links = [
 
 const here = Astro.url.pathname.replace(/\/$/, "") || "/";
 
-const isActive = (href: string) =>
-  (href.replace(/\/$/, "") || "/") === here;
+const isActive = (href: string) => {
+  const target = href.replace(/\/$/, "") || "/";
+  return here === target || here.startsWith(`${target}/`);
+};
 ---
 
 <style>
