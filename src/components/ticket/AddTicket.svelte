@@ -14,6 +14,7 @@
   let message = $state('');
   let bookingId = $state('');
   let existingTicket = $state<StoredTicket | null>(null);
+  let qrInput: HTMLInputElement;
 
   onMount(() => {
     existingTicket = loadTicket();
@@ -68,6 +69,7 @@
     input.value = '';
     if (!file) return;
 
+    bookingId = '';
     phase = 'busy';
     message = 'Reading QR code...';
     try {
@@ -98,7 +100,7 @@
   <p>Scan the QR code from your ticket.</p>
   <div>
     <label class="p-button--positive has-icon" for="ticket-qr-input">
-      <i class="p-icon--screenshot is-dark"></i><span>Scan QR code</span><input id="ticket-qr-input" type="file" accept="image/*" onchange={readQR} hidden>
+      <i class="p-icon--screenshot is-dark"></i><span>Scan QR code</span><input bind:this={qrInput} id="ticket-qr-input" type="file" accept="image/*" onchange={readQR} hidden>
     </label>
   </div>
 
@@ -142,6 +144,6 @@
     confirmVariant="positive"
     confirmIcon="p-icon--restart is-dark"
     onDismiss={dismiss}
-    onConfirm={() => bookingId && fetchAndSave()}
+    onConfirm={() => bookingId ? fetchAndSave() : qrInput.click()}
   />
 {/if}
