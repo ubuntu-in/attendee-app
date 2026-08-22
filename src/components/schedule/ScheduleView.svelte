@@ -4,7 +4,7 @@
   import { EVENT_CONFIG } from '../../config.js';
   import ScheduleDay from './ScheduleDay.svelte';
 
-  const indicoTimetableUrl = `${EVENT_CONFIG.indicoBaseUrl}/event/${EVENT_CONFIG.indicoEventId}/timetable/`;
+  const indicoTimetableUrl = `${EVENT_CONFIG.indicoBaseUrl}/event/${EVENT_CONFIG.indicoId}/timetable/`;
 
   $effect(() => {
     scheduleStore.load();
@@ -83,7 +83,7 @@
   <div class="u-align--center">
     <h2 class="p-heading--4">Schedule coming soon</h2>
     <p>
-      Session details for UbuCon India 2026 will be announced closer to the
+      Session details for {EVENT_CONFIG.name} will be announced closer to the
       event.
     </p>
     <p>

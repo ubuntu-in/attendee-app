@@ -32,11 +32,11 @@
   >
     <header class="p-modal__header">
       <h2 class="p-modal__title" id="modal-title">{title}</h2>
-      <button class="p-modal__close" type="button" aria-label={dismissLabel} onclick={onDismiss}>
+      <button class="p-modal__close" type="button" aria-label={dismissLabel} onclick={onDismiss} autofocus>
         Close
       </button>
     </header>
-    <p id="modal-desc">{@html description}</p>
+    <p id="modal-desc">{description}</p>
     <footer class="p-modal__footer">
       <button
         class="p-button has-icon"

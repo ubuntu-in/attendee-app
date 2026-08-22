@@ -1,5 +1,7 @@
 import { EVENT_CONFIG } from '../config.js';
 
+const EVENT_TIMEZONE = 'Asia/Kolkata';
+
 export interface IndicoSession {
   id: string;
   title: string;
@@ -85,7 +87,7 @@ export async function fetchSchedule(eventId: number): Promise<IndicoSession[]> {
  */
 export function groupByDay(sessions: IndicoSession[]): Map<string, IndicoSession[]> {
   const fmt = new Intl.DateTimeFormat('en-CA', {
-    timeZone: EVENT_CONFIG.timezone,
+    timeZone: EVENT_TIMEZONE,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -108,7 +110,7 @@ export function groupByDay(sessions: IndicoSession[]): Map<string, IndicoSession
  */
 export function formatTimeIST(date: Date): string {
   return new Intl.DateTimeFormat('en-IN', {
-    timeZone: EVENT_CONFIG.timezone,
+    timeZone: EVENT_TIMEZONE,
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
@@ -121,7 +123,7 @@ export function formatTimeIST(date: Date): string {
 export function formatDateLabel(dateStr: string): string {
   const date = new Date(`${dateStr}T06:30:00Z`);
   return new Intl.DateTimeFormat('en-IN', {
-    timeZone: EVENT_CONFIG.timezone,
+    timeZone: EVENT_TIMEZONE,
     weekday: 'long',
     day: 'numeric',
     month: 'short',

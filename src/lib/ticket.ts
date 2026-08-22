@@ -72,6 +72,10 @@ export async function fetchTicket(bookingId: string): Promise<StoredTicket> {
   }
 
   const data = (await res.json()) as Record<string, unknown>;
+  if (typeof data.name !== 'string' || !data.name.trim()) {
+    throw new Error('KonfHub returned invalid ticket data. Please try again.');
+  }
+
   return {
     bookingId,
     eventId: EVENT_CONFIG.id,

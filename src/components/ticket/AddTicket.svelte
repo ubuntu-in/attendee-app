@@ -14,7 +14,7 @@
   let message = $state('');
   let bookingId = $state('');
   let existingTicket = $state<StoredTicket | null>(null);
-  let qrInput: HTMLInputElement;
+  let qrInput: HTMLInputElement | undefined;
 
   onMount(() => {
     existingTicket = loadTicket();
@@ -127,7 +127,7 @@
 {#if phase === 'confirm' && existingTicket}
   <ConfirmModal
     title="Replace saved ticket?"
-    description={`This device already has a ticket for <strong>${existingTicket.attendee.name}</strong>.`}
+    description={`This device already has a ticket for ${existingTicket.attendee.name}.`}
     dismissLabel="Keep current ticket"
     confirmLabel="Replace ticket"
     confirmVariant="positive"
@@ -144,6 +144,6 @@
     confirmVariant="positive"
     confirmIcon="p-icon--restart is-dark"
     onDismiss={dismiss}
-    onConfirm={() => bookingId ? fetchAndSave() : qrInput.click()}
+    onConfirm={() => bookingId ? fetchAndSave() : qrInput?.click()}
   />
 {/if}
