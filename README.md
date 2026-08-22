@@ -1,53 +1,60 @@
 # UbuCon India 2026 - Attendee App
 
-A Progressive Web App (PWA) built for the attendees of UbuCon India 2026. This app is designed to provide quick, offline-first access to event information, schedules, ticketing, and venue details, using Canonical's official Vanilla Framework.
+A small installable web app for UbuCon India 2026 attendees. It provides fast access to the ticket, current schedule, venue guidance, event conduct, and event broadcasts before and during the event.
 
-## 🚀 Tech Stack
+Product intent, scope, and decisions live in [PRD.md](PRD.md).
 
-- **Framework**: [Astro 5](https://astro.build/) - For blazing-fast static site generation and SPA-like client routing.
-- **Styling**: [Vanilla Framework](https://vanillaframework.io/) (SCSS) - Canonical's design system, strictly configured via SCSS variables (no custom CSS classes permitted).
-- **Offline Support**: Native Service Workers configured with a **Cache-First** strategy to ensure the app works flawlessly on spotty conference Wi-Fi.
+## Tech Stack
 
-## 📂 Repository Structure
+- **Framework**: [Astro](https://astro.build/) (static output by default) with Svelte 5 client islands.
+- **Runtime and package manager**: [Bun](https://bun.sh/), versions pinned in `bun.lock`.
+- **Styling**: [Vanilla Framework](https://vanillaframework.io/) (SCSS) with component-scoped custom CSS where a Vanilla pattern does not fit.
+- **Offline Support**: Service Worker caches app assets and the last successful schedule response for offline reading after first use.
+- **Schedule source**: [Indico](https://docs.getindico.io) through the app's own `/api/schedule` proxy.
+
+## Repository Structure
 
 ```text
 /
-├── public/                     # Static assets (fonts, icons, manifest, service worker)
-│   ├── font/                   # Locally hosted Ubuntu fonts (no external Google Fonts)
-│   ├── img/                    # Logos and images
-│   ├── manifest.json           # PWA configuration
-│   └── sw.js                   # Cache-first Service Worker
+├── public/                 # Static assets: manifest, icons, service worker
 ├── src/
-│   ├── layouts/
-│   │   └── BaseLayout.astro    # Global HTML shell, navigation, and PWA registration
-│   ├── pages/
-│   │   ├── index.astro         # Home page
-│   │   ├── schedule.astro      # Event schedule
-│   │   ├── ticket.astro        # Attendee ticket / QR code
-│   │   └── venue.astro         # Venue details and map
-│   └── styles/
-│       └── global.scss         # Vanilla Framework SCSS imports and variable overrides
-├── astro.config.mjs            # Astro configuration (Vite, SCSS deprecation silence)
-└── package.json                # Project dependencies and scripts
+│   ├── components/         # Shared UI and interactive client islands
+│   │   ├── schedule/       # Schedule island
+│   │   └── ticket/         # Ticket add/view components
+│   ├── layouts/            # Document shell and metadata
+│   ├── lib/                # Pure domain logic and external-service adapters
+│   ├── pages/              # Routes and thin API handlers
+│   │   ├── api/schedule.ts # Indico proxy (Worker route)
+│   │   └── ticket/         # /ticket/add route
+│   ├── styles/             # Vanilla settings and shared shell rules
+│   └── config.ts           # Annual event configuration
+├── tests/                  # Small tests for business-critical logic
+├── astro.config.mjs
+└── package.json            # Project dependencies and scripts
 ```
 
-## 🛠️ Development
+## Development
 
-All commands are run from the root of the project.
+Run from the project root.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev -- --host`   | Starts local dev server accessible on local network|
-| `npm run build`           | Builds your production site to `./dist/`         |
-| `npm run preview`         | Previews your build locally                      |
+| Command                                | Action                                        |
+| :------------------------------------- | :-------------------------------------------- |
+| `bun install`                          | Installs dependencies                         |
+| `bun run check`                        | Type and template diagnostics                 |
+| `bun test`                             | Run pure logic tests                          |
+| `bun run dev`                          | Start the local dev server                    |
+| `bun run build`                        | Build the production site to `./dist/`        |
+| `bun run preview`                      | Preview a local build                         |
 
-## 🎨 Design System Rules
+## Event Configuration
 
-This project strictly adheres to Canonical's design language:
-1. **No Custom CSS**: All styling must be achieved using Vanilla Framework's native classes or by overriding its SCSS variables in `global.scss`.
-2. **Offline-First**: External CDNs (like Google Fonts) are completely disabled. All assets must be served from the `public/` directory and cached by `sw.js`.
-3. **Colors**:
-   - Ubuntu Orange: `#E95420`
-   - Aubergine: `#772953`
-   - Canonical Green: `#38B44A`
+Annual event details (name, dates, venue, Indico origin and event ID, ticket event ID) are typed in one place: `src/config.ts`. Public configuration is kept in source. Secrets use platform stores (Cloudflare, Firebase), never Git. `.env.example` lists names only.
+
+## Design System Rules
+
+- Use semantic HTML first, then documented Vanilla patterns, then small component-scoped CSS.
+- External CDNs are disabled; assets are served and cached by the app.
+- Brand colors:
+  - Ubuntu Orange: `#E95420`
+  - Aubergine: `#772953`
+  - Canonical Green: `#38B44A`
