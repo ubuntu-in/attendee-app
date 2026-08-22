@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { EVENT_CONFIG } from '../../config.js';
 
 export const GET: APIRoute = async () => {
-  const url = `${EVENT_CONFIG.indicoBaseUrl}/export/event/${EVENT_CONFIG.indicoEventId}.json?detail=contributions`;
+  const url = `${EVENT_CONFIG.indicoBaseUrl}/export/event/${EVENT_CONFIG.indicoId}.json?detail=contributions`;
 
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });

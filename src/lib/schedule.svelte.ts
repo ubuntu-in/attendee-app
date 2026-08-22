@@ -16,7 +16,7 @@ class ScheduleStore {
     this.errorMessage = null;
 
     try {
-      const sessions = await fetchSchedule(EVENT_CONFIG.indicoEventId);
+      const sessions = await fetchSchedule(EVENT_CONFIG.indicoId);
 
       if (loadGen !== this.loadGeneration) return;
 

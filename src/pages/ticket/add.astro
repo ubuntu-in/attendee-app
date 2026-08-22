@@ -1,0 +1,10 @@
+---
+import Base from '../../layouts/Base.astro';
+import AddTicket from '../../components/ticket/AddTicket.svelte';
+---
+
+<Base title="Add Ticket">
+  <div class="col-12">
+    <AddTicket client:load />
+  </div>
+</Base>
