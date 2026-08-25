@@ -102,7 +102,7 @@
   <p>Scan the QR code from your ticket.</p>
   <div>
     <label class="p-button--positive has-icon" for="ticket-qr-input">
-      <i class="p-icon--screenshot is-dark"></i><span>Scan QR code</span><input bind:this={qrInput} id="ticket-qr-input" type="file" accept="image/*" onchange={readQR} hidden>
+      <i class="p-icon--screenshot is-dark"></i><span>Scan QR code</span><input bind:this={qrInput} id="ticket-qr-input" type="file" accept="image/*" capture="environment" onchange={readQR} hidden>
     </label>
   </div>
 
