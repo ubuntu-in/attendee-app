@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import QrScanner from 'qr-scanner';
   import { EVENT_CONFIG } from '../../config.js';
   import {
     fetchTicket,
@@ -87,7 +88,6 @@
   }
 
   async function scanQrFromFile(file: File): Promise<string> {
-    const { default: QrScanner } = await import('qr-scanner');
     try {
       const result = await QrScanner.scanImage(file, { returnDetailedScanResult: true });
       return result.data;

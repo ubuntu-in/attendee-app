@@ -16,9 +16,12 @@
   let ticket = $state<StoredTicket | null>(null);
   let phase = $state<Phase>('checking');
   let logoSvg = $state<string | undefined>();
+  let isStandalone = $state(false);
   let qrSvg = $derived(ticket ? buildQrSvg(ticket, logoSvg) : '');
 
   onMount(async () => {
+    isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || (navigator as Navigator & { standalone?: boolean }).standalone === true;
     ticket = loadTicket();
     if (!ticket) {
       window.location.assign(`${base}ticket/add`);
@@ -91,6 +94,19 @@
       {/if}
     </div>
   </div>
+
+  {#if !isStandalone}
+    <div class="p-notification--information">
+      <div class="p-notification__content">
+        <h2 class="p-notification__title">Quick access from your Home Screen</h2>
+        <p class="p-notification__message">
+          Optional: add this attendee app to your Home Screen for quicker access.
+          On iPhone or iPad, tap Share, then Add to Home Screen.
+          On Android, open the browser menu and choose Add to Home screen or Install app.
+        </p>
+      </div>
+    </div>
+  {/if}
 
   {#if phase === 'confirmRemove'}
     <ConfirmModal
