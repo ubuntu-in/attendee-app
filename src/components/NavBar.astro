@@ -7,11 +7,12 @@ const links = [
   { label: "Venue", href: `${base}venue` },
 ];
 
-const here = Astro.url.pathname.replace(/\/$/, "") || "/";
+const here = Astro.url.pathname.replace(/\/+$/, "");
+const root = base.replace(/\/+$/, "");
 
 const isActive = (href: string) => {
-  const target = href.replace(/\/$/, "") || "/";
-  return here === target || here.startsWith(`${target}/`);
+  const target = href.replace(/\/+$/, "");
+  return here === target || (target !== root && here.startsWith(`${target}/`));
 };
 ---
 
