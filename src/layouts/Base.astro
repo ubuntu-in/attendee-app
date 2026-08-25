@@ -6,7 +6,6 @@
  * Configured strictly with Canonical Vanilla Framework.
  */
 import '../styles/global.scss';
-import { ClientRouter } from 'astro:transitions';
 import NavBar from '../components/NavBar.astro';
 import Footer from '../components/Footer.astro';
 
@@ -31,11 +30,6 @@ const base = import.meta.env.BASE_URL;
     <link rel="manifest" href={`${base}manifest.webmanifest`} />
     <meta name="theme-color" content="#E95420" />
     <title>{title} | UbuCon India 2026</title>
-    <!-- 
-      OPTIMIZATION: ClientRouter enables SPA-like instant navigation between pages.
-      It intercepts clicks and updates the DOM natively, avoiding full page reloads. 
-    -->
-    <ClientRouter />
   </head>
   <body>
     <NavBar />
