@@ -10,6 +10,8 @@
   } from '../../lib/ticket.js';
   import ConfirmModal from './ConfirmModal.svelte';
 
+  const base = import.meta.env.BASE_URL;
+
   let phase = $state<'idle' | 'busy' | 'confirm' | 'error'>('idle');
   let message = $state('');
   let bookingId = $state('');
@@ -19,16 +21,16 @@
   onMount(() => {
     existingTicket = loadTicket();
     const url = new URL(window.location.href);
-    const id = url.searchParams.get('bookingid')?.trim();
+    const id = new URLSearchParams(url.hash.slice(1)).get('bookingid')?.trim();
     if (!id) return;
 
-    history.replaceState(null, '', `${url.pathname}${url.hash}`);
+    history.replaceState(null, '', `${url.pathname}${url.search}`);
     void handleBookingId(id);
   });
 
   async function handleBookingId(id: string) {
     if (existingTicket?.bookingId === id) {
-      window.location.assign('/ticket');
+      window.location.assign(`${base}ticket`);
       return;
     }
     bookingId = id;
@@ -44,7 +46,7 @@
     message = 'Validating ticket...';
     try {
       saveTicket(await fetchTicket(bookingId));
-      window.location.assign('/ticket');
+      window.location.assign(`${base}ticket`);
     } catch (error) {
       fail(error, 'Could not add this ticket.');
     }
@@ -52,7 +54,7 @@
 
   function dismiss() {
     if (existingTicket) {
-      window.location.assign('/ticket');
+      window.location.assign(`${base}ticket`);
     } else {
       phase = 'idle';
     }

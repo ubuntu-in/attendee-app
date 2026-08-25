@@ -9,6 +9,8 @@
   } from '../../lib/ticket.js';
   import ConfirmModal from './ConfirmModal.svelte';
 
+  const base = import.meta.env.BASE_URL;
+
   type Phase = 'checking' | 'view' | 'confirmRemove';
 
   let ticket = $state<StoredTicket | null>(null);
@@ -19,11 +21,11 @@
   onMount(async () => {
     ticket = loadTicket();
     if (!ticket) {
-      window.location.assign('/ticket/add');
+      window.location.assign(`${base}ticket/add`);
       return;
     }
     phase = 'view';
-    logoSvg = await fetch('/ubuntu-india-logo.svg')
+    logoSvg = await fetch(`${base}favicon.svg`)
       .then((res) => (res.ok ? res.text() : undefined))
       .then(sanitizeLogoSvg)
       .catch(() => undefined);
@@ -53,7 +55,7 @@
 
   function confirmRemoval() {
     removeTicket();
-    window.location.assign('/ticket/add');
+    window.location.assign(`${base}ticket/add`);
   }
 </script>
 
@@ -76,7 +78,7 @@
 
       {#if phase === 'view'}
         <p class="u-sv2">
-          <button class="p-button--positive has-icon" type="button" onclick={() => window.location.assign('/ticket/add')}
+          <button class="p-button--positive has-icon" type="button" onclick={() => window.location.assign(`${base}ticket/add`)}
             aria-label="Replace ticket" title="Replace ticket">
             <i class="p-icon--edit is-dark"></i>
             <span>Replace</span>

@@ -1,9 +1,10 @@
 ---
+const base = import.meta.env.BASE_URL;
 const links = [
-  { label: "Home", href: "/" },
-  { label: "Ticket", href: "/ticket" },
-  { label: "Schedule", href: "/schedule" },
-  { label: "Venue", href: "/venue" },
+  { label: "Home", href: `${base}` },
+  { label: "Ticket", href: `${base}ticket` },
+  { label: "Schedule", href: `${base}schedule` },
+  { label: "Venue", href: `${base}venue` },
 ];
 
 const here = Astro.url.pathname.replace(/\/$/, "") || "/";
@@ -26,9 +27,9 @@ const isActive = (href: string) => {
   <div class="p-navigation__row--25-75">
     <div class="p-navigation__banner">
       <div class="p-navigation__tagged-logo">
-        <a class="p-navigation__link" href="/" aria-label="Attendee App home">
+        <a class="p-navigation__link" href={`${base}`} aria-label="Attendee App home">
           <div class="p-navigation__logo-tag">
-            <img class="p-navigation__logo-icon" src="/ashoke-chakra-cof.svg" alt="Ubuntu India"/>
+            <img class="p-navigation__logo-icon" src={`${base}ashoke-chakra-cof.svg`} alt="Ubuntu India"/>
           </div>
           <span class="p-navigation__logo-title">Attendee App</span>
         </a>

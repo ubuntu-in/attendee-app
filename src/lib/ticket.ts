@@ -15,7 +15,7 @@ export interface StoredTicket {
   attendee: KonfHubParticipant;
 }
 
-const STORAGE_KEY = 'ticket';
+const STORAGE_KEY = 'uci:ticket';
 const KONFHUB_URL = 'https://api.konfhub.com/integration/validate';
 
 export function buildQRPayload(ticket: StoredTicket): string {

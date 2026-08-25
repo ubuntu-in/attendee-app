@@ -1,0 +1,10 @@
+name = "ubucon-india-attendee"
+compatibility_date = "2026-08-25"
+
+routes = [
+  { pattern = "in.ubucon.org/attendee", zone_name = "in.ubucon.org" },
+  { pattern = "in.ubucon.org/attendee/*", zone_name = "in.ubucon.org" },
+]
+
+[assets]
+directory = "./dist"
