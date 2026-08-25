@@ -1,6 +1,6 @@
 {
   "name": "UbuCon India",
-  "short_name": "UC India",
+  "short_name": "UbuCon India",
   "description": "Attendee App for UbuCon India",
   "id": "/attendee/",
   "scope": "/attendee/",
