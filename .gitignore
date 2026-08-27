@@ -1,0 +1,15 @@
+# Local env files
+.env
+.env.*
+!.env.example
+
+# node_modules
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# testing
+playwright-report/
+test-results/

@@ -8,22 +8,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="Home" raw={true}>
   <!-- Hero Section -->
-  <div class="p-strip--suru">
+  <section class="p-suru p-suru--25-75">
     <div class="row">
       <div class="col-8">
         <h1 class="p-heading--1">UbuCon India 2026</h1>
-        <p class="p-heading--4">Your official guide and companion app for the premier Ubuntu gathering in Bengaluru. Everything you need, right in your pocket.</p>
+        <p class="p-heading--4" style="color: #2C001E;">Your official guide and companion app for the premier Ubuntu gathering in Bengaluru. Everything you need, right in your pocket.</p>
         <ul class="p-inline-list" style="margin-top: 1.5rem;">
           <li class="p-inline-list__item">
             <a href="/schedule" class="p-button" style="background-color: #2C001E; border-color: #2C001E; color: white;">View Schedule</a>
           </li>
           <li class="p-inline-list__item">
-            <a href="/ticket" class="p-button" style="background-color: transparent; border-color: white; color: white;">My Ticket</a>
+            <a href="/ticket" class="p-button" style="background-color: transparent; border-color: #2C001E; color: #2C001E;">My Ticket</a>
           </li>
         </ul>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- App Guide / Features -->
   <div class="p-strip">
@@ -73,8 +73,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="p-card">
           <h3 class="p-heading--4">Important Links</h3>
           <ul class="p-list">
-            <li class="p-list__item"><a href="/conduct">Code of Conduct</a></li>
-            <li class="p-list__item"><a href="/sponsors">Our Sponsors</a></li>
             <li class="p-list__item"><a href="https://t.me/ubuconindia" target="_blank">Join Telegram Group</a></li>
           </ul>
         </div>
