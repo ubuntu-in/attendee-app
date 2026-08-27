@@ -5,15 +5,17 @@ import svelte from '@astrojs/svelte';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://in.ubucon.org',
+  base: '/attendee/',
+  outDir: './dist/attendee',
   integrations: [svelte()],
   vite: {
     css: {
       preprocessorOptions: {
         scss: {
-          // Vanilla Framework uses deprecated Sass @import rules which span the console.
-          // This tells the modern Sass compiler to silence warnings coming from node_modules.
+          // vanilla still depends on old ways including @import
           quietDeps: true,
-          silenceDeprecations: ['legacy-js-api', 'import', 'global-builtin']
+          silenceDeprecations: ['import', 'global-builtin', 'if-function']
         }
       }
     }

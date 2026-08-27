@@ -25,3 +25,21 @@ $navigation-logo-tag-width: 3rem;
 
 // Initialize all vanilla framework components
 @include vanilla;
+
+// Additional icons used by the ticket pages (not part of the core icon set)
+@include vf-p-icon-screenshot;
+@include vf-p-icon-edit;
+@include vf-p-icon-restart;
+@include vf-p-icon-task-outstanding;
+
+// Sticky footer: Vanilla has no utility for this, so flex the page shell.
+// Keeps the footer at the viewport bottom on short pages (e.g. mobile).
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#main-content {
+  flex: 1 0 auto;
+}

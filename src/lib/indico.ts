@@ -1,5 +1,7 @@
 import { EVENT_CONFIG } from '../config.js';
 
+const EVENT_TIMEZONE = 'Asia/Kolkata';
+
 export interface IndicoSession {
   id: string;
   title: string;
@@ -34,11 +36,18 @@ function speakerName(s: Record<string, unknown>): string {
  * Fetches contributions from the Indico export API and normalises them.
  */
 export async function fetchSchedule(eventId: number): Promise<IndicoSession[]> {
-  const url = `${EVENT_CONFIG.indicoBaseUrl}/export/event/${eventId}.json?detail=contributions`;
+  const url = `/api/schedule`;
 
   const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
   if (!res.ok) {
-    throw new Error(`Failed to fetch schedule from Indico (HTTP ${res.status})`);
+    let message = `Failed to fetch schedule from Indico (HTTP ${res.status})`;
+    try {
+      const body = await res.json() as { error?: string };
+      if (body.error) message = body.error;
+    } catch {
+      // ignore malformed error body and keep the generic HTTP message
+    }
+    throw new Error(message);
   }
 
   const json = await res.json() as Record<string, unknown>;
@@ -78,7 +87,7 @@ export async function fetchSchedule(eventId: number): Promise<IndicoSession[]> {
  */
 export function groupByDay(sessions: IndicoSession[]): Map<string, IndicoSession[]> {
   const fmt = new Intl.DateTimeFormat('en-CA', {
-    timeZone: EVENT_CONFIG.timezone,
+    timeZone: EVENT_TIMEZONE,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -101,7 +110,7 @@ export function groupByDay(sessions: IndicoSession[]): Map<string, IndicoSession
  */
 export function formatTimeIST(date: Date): string {
   return new Intl.DateTimeFormat('en-IN', {
-    timeZone: EVENT_CONFIG.timezone,
+    timeZone: EVENT_TIMEZONE,
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
@@ -114,7 +123,7 @@ export function formatTimeIST(date: Date): string {
 export function formatDateLabel(dateStr: string): string {
   const date = new Date(`${dateStr}T06:30:00Z`);
   return new Intl.DateTimeFormat('en-IN', {
-    timeZone: EVENT_CONFIG.timezone,
+    timeZone: EVENT_TIMEZONE,
     weekday: 'long',
     day: 'numeric',
     month: 'short',

@@ -1,17 +1,37 @@
 {
-  "name": "UbuCon India 2026",
-  "short_name": "UbuCon",
-  "description": "Attendee App for UbuCon India 2026",
-  "start_url": "/",
+  "name": "UbuCon India",
+  "short_name": "UbuCon India",
+  "description": "Attendee App for UbuCon India",
+  "id": "/attendee/",
+  "scope": "/attendee/",
+  "start_url": "/attendee/",
   "display": "standalone",
   "background_color": "#111111",
   "theme_color": "#E95420",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android-chrome-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "android-chrome-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
