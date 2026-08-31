@@ -40,3 +40,4 @@ pnpm-debug.log*
 scripts
 playwright-report/
 test-results/
+pnpm-lock.yaml
