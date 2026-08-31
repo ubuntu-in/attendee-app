@@ -41,3 +41,4 @@ scripts
 playwright-report/
 test-results/
 pnpm-lock.yaml
+AGENTS.md
