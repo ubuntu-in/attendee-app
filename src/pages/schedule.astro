@@ -1,12 +1,32 @@
 ---
+/**
+ * @file schedule.astro
+ * @description Conference schedule page for UbuCon India 2026.
+ */
 import Base from '../layouts/Base.astro';
 import ScheduleView from '../components/schedule/ScheduleView.svelte';
+import { EVENT_CONFIG } from '../config.js';
 ---
 
 <Base title="Schedule">
-  <div class="col-12">
-    <h1>Schedule</h1>
-    <p>Browse sessions for UbuCon India 2026. Tap a session to view details on Indico.</p>
-    <ScheduleView client:load />
-  </div>
+  <!-- Page Header Strip -->
+  <section class="p-strip--light is-shallow">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="p-heading--2">Conference Schedule</h1>
+        <p class="p-heading--5 u-text--muted u-no-margin--bottom">
+          Browse sessions, keynotes, and technical workshops for {EVENT_CONFIG.name}. All times in Indian Standard Time (IST).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timetable Content Strip -->
+  <section class="p-strip">
+    <div class="row">
+      <div class="col-12">
+        <ScheduleView client:load />
+      </div>
+    </div>
+  </section>
 </Base>
