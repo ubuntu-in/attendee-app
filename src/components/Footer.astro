@@ -1,10 +1,65 @@
 ---
+const base = import.meta.env.BASE_URL;
 ---
 
-<footer class="p-strip--light">
+<footer class="p-strip--light is-shallow">
+  <div class="row">
+    <div class="col-3 col-medium-2 col-small-4">
+      <h3 class="p-muted-heading">Attendee Portal</h3>
+      <ul class="p-list">
+        <li class="p-list__item"><a href={`${base}`} class="p-link--soft">Home</a></li>
+        <li class="p-list__item"><a href={`${base}ticket`} class="p-link--soft">My Ticket Pass</a></li>
+        <li class="p-list__item"><a href={`${base}schedule`} class="p-link--soft">Schedule</a></li>
+        <li class="p-list__item"><a href={`${base}venue`} class="p-link--soft">Venue & Travel</a></li>
+      </ul>
+    </div>
+
+    <div class="col-3 col-medium-2 col-small-4">
+      <h3 class="p-muted-heading">Conference Resources</h3>
+      <ul class="p-list">
+        <li class="p-list__item">
+          <a href="https://events.canonical.com/event/157/timetable/" target="_blank" rel="noopener noreferrer" class="p-link--soft">
+            Indico Timetable <i class="p-icon--external-link is-light"></i>
+          </a>
+        </li>
+        <li class="p-list__item">
+          <a href="https://konfhub.com" target="_blank" rel="noopener noreferrer" class="p-link--soft">
+            KonfHub Portal <i class="p-icon--external-link is-light"></i>
+          </a>
+        </li>
+        <li class="p-list__item">
+          <a href="https://in.ubucon.org" target="_blank" rel="noopener noreferrer" class="p-link--soft">
+            UbuCon India Website <i class="p-icon--external-link is-light"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-3 col-medium-2 col-small-4">
+      <h3 class="p-muted-heading">Community</h3>
+      <ul class="p-list">
+        <li class="p-list__item">
+          <a href="https://ubuntu.com/community/code-of-conduct" target="_blank" rel="noopener noreferrer" class="p-link--soft">
+            Code of Conduct
+          </a>
+        </li>
+        <li class="p-list__item">
+          <a href="https://ubuntu-in.org" target="_blank" rel="noopener noreferrer" class="p-link--soft">
+            Ubuntu India LoCo
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    
+  </div>
+
   <div class="row">
     <div class="col-12">
-      <p>&copy; {new Date().getFullYear()} UbuCon India. Designed with Canonical Vanilla Framework.</p>
+      <hr class="p-divider" />
+      <p class="u-text--muted u-no-margin--bottom">
+        <small>&copy; {new Date().getFullYear()} UbuCon India. Ubuntu and Canonical are registered trademarks of Canonical Ltd.</small>
+      </p>
     </div>
   </div>
 </footer>
