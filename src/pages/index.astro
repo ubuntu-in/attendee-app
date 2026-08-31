@@ -4,11 +4,138 @@
  * @description The primary landing page for the UbuCon India 2026 Attendee App.
  */
 import Base from '../layouts/Base.astro';
+import { EVENT_CONFIG } from '../config.js';
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <Base title="Home">
-  <div class="col-12">
-    <h1>Welcome to UbuCon India 2026</h1>
-    <p>The premier gathering of the Ubuntu community in India.</p>
-  </div>
+  <!-- Hero Section -->
+  <section class="p-strip--suru is-dark">
+    <div class="row">
+      <div class="col-8 col-medium-5 col-small-4">
+        <h1 class="p-heading--1 u-no-margin--bottom">{EVENT_CONFIG.name}</h1>
+        <p class="p-heading--4 u-no-margin--bottom">The Premier Ubuntu Gathering in India</p>
+        <p class="u-text--muted">
+          Your official offline conference companion for schedules, ticket badges, venue navigation, and event updates.
+        </p>
+        <div class="u-sv2">
+          <a href={`${base}ticket`} class="p-button--positive has-icon">
+            <i class="p-icon--task-outstanding is-dark"></i>
+            <span>My Ticket Pass</span>
+          </a>
+          <a href={`${base}schedule`} class="p-button">
+            View Schedule
+          </a>
+          <a href={`${base}venue`} class="p-button">
+            Venue & Travel
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Access Cards -->
+  <section class="p-strip">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="p-heading--3">Attendee Companion</h2>
+        <p class="p-muted-heading">Quick access to essential conference resources</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Card 1: Ticket -->
+      <div class="col-4 col-medium-3 col-small-4">
+        <div class="p-card--highlighted">
+          <div class="p-card__inner">
+            <h3 class="p-heading--4">
+              <i class="p-icon--screenshot"></i> Attendee Pass
+            </h3>
+            <p class="u-text--muted">
+              Access your digital QR ticket badge offline for fast on-site check-in and conference kit pickup.
+            </p>
+            <p class="u-no-margin--bottom">
+              <a href={`${base}ticket`} class="p-button is-inline">
+                Open Ticket Pass &rarr;
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Schedule -->
+      <div class="col-4 col-medium-3 col-small-4">
+        <div class="p-card--highlighted">
+          <div class="p-card__inner">
+            <h3 class="p-heading--4">
+              <i class="p-icon--menu"></i> Schedule & Talks
+            </h3>
+            <p class="u-text--muted">
+              Explore keynotes, breakout sessions, technical workshops, and speaker profiles synced from Indico.
+            </p>
+            <p class="u-no-margin--bottom">
+              <a href={`${base}schedule`} class="p-button is-inline">
+                Browse Timetable &rarr;
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Venue -->
+      <div class="col-4 col-medium-3 col-small-4">
+        <div class="p-card--highlighted">
+          <div class="p-card__inner">
+            <h3 class="p-heading--4">
+              <i class="p-icon--info"></i> Venue & Transit
+            </h3>
+            <p class="u-text--muted">
+              Find campus directions, nearest transit hubs, on-site Wi-Fi credentials, and amenities.
+            </p>
+            <p class="u-no-margin--bottom">
+              <a href={`${base}venue`} class="p-button is-inline">
+                Venue Details &rarr;
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Check-in Guide & PWA Notice -->
+  <section class="p-strip--light is-shallow">
+    <div class="row">
+      <div class="col-6 col-medium-3 col-small-4">
+        <h3 class="p-heading--4">Conference Check-in Guide</h3>
+        <ul class="p-list--divided">
+          <li class="p-list__item">
+            <strong>1. Scan & Store Ticket:</strong> Scan the QR code from your KonfHub email into this app.
+          </li>
+          <li class="p-list__item">
+            <strong>2. Registration Desk:</strong> Present your stored pass at the lobby check-in counter.
+          </li>
+          <li class="p-list__item">
+            <strong>3. Badge & Swag:</strong> Collect your physical conference badge and official Ubuntu swag pack.
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-medium-3 col-small-4">
+        <h3 class="p-heading--4">Offline-Ready Experience</h3>
+        <div class="p-notification--information">
+          <div class="p-notification__content">
+            <h5 class="p-notification__title">Install to Home Screen</h5>
+            <p class="p-notification__message">
+              Add this web application to your phone's Home Screen for instant offline access to your ticket and timetable during the conference.
+            </p>
+          </div>
+        </div>
+        <p class="u-text--muted">
+          All schedules and badge passes are securely cached on your device to ensure reliability even on congested conference networks.
+        </p>
+      </div>
+    </div>
+  </section>
 </Base>
