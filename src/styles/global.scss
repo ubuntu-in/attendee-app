@@ -37,6 +37,12 @@ $navigation-logo-tag-width: 3rem;
 @include vf-p-icon-search;
 @include vf-p-icon-share;
 @include vf-p-icon-info;
+@include vf-p-icon-pin;
+@include vf-p-icon-help;
+@include vf-p-icon-anchor;
+@include vf-p-icon-machines;
+@include vf-p-icon-applications;
+@include vf-p-icon-units;
 
 // Sticky footer: Vanilla has no utility for this, so flex the page shell.
 // Keeps the footer at the viewport bottom on short pages (e.g. mobile).
