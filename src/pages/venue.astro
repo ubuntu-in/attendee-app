@@ -1,14 +1,197 @@
 ---
 /**
  * @file venue.astro
- * @description The venue page for the UbuCon India 2026 Attendee App.
+ * @description Formal venue and travel guide for UbuCon India 2026.
  */
 import Base from '../layouts/Base.astro';
+import { EVENT_CONFIG } from '../config.js';
 ---
 
-<Base title="Venue">
-  <div class="col-12">
-    <h1>Venue Information</h1>
-    <p>Venue details coming soon...</p>
-  </div>
+<Base title="Venue & Travel">
+  <!-- Page Header Strip -->
+  <section class="p-strip--light is-shallow">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="p-heading--2">Venue & Travel Guide</h1>
+        <p class="p-heading--5 u-text--muted u-no-margin--bottom">
+          Find directions, transportation options, campus layout, and on-site facilities for {EVENT_CONFIG.name}.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Venue Location Card -->
+  <section class="p-strip">
+    <div class="row">
+      <div class="col-12">
+        <div class="p-card--highlighted">
+          <div class="p-card__inner">
+            <div class="row">
+              <div class="col-8 col-medium-4 col-small-4">
+                <span class="p-chip">
+                  <span class="p-chip__label">Official Conference Location</span>
+                </span>
+                <h2 class="p-heading--3 u-no-margin--top">UbuCon India 2026 Main Campus</h2>
+                <p class="p-heading--5 u-text--muted">
+                  Auditorium & Conference Complex, Main Academic Block
+                </p>
+                <p class="u-text--muted">
+                  India &bull; Full address and interactive navigation details.
+                </p>
+                <div class="u-sv2">
+                  <a
+                    href="https://maps.google.com/?q=UbuCon+India"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="p-button--positive has-icon"
+                  >
+                    <i class="p-icon--external-link is-dark"></i>
+                    <span>Google Maps</span>
+                  </a>
+                  <a
+                    href="https://www.openstreetmap.org"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="p-button has-icon"
+                  >
+                    <i class="p-icon--external-link"></i>
+                    <span>OpenStreetMap</span>
+                  </a>
+                </div>
+              </div>
+
+              <div class="col-4 col-medium-2 col-small-4">
+                <div class="p-notification--information">
+                  <div class="p-notification__content">
+                    <h5 class="p-notification__title">Check-in Timing</h5>
+                    <p class="p-notification__message">
+                      Registration desk opens at <strong>08:30 AM IST</strong>. Please have your QR pass ready on your phone.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Transit & Getting There -->
+  <section class="p-strip--light is-shallow">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="p-heading--3">Getting to the Venue</h2>
+        <p class="p-muted-heading">Recommended travel routes and transportation links</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Flight / Airport -->
+      <div class="col-4 col-medium-2 col-small-4">
+        <div class="p-card">
+          <div class="p-card__inner">
+            <h3 class="p-heading--4">
+              <i class="p-icon--anchor"></i> By Air
+            </h3>
+            <p class="u-text--muted">
+              Nearest International & Domestic Airport. App-based cabs (Ola, Uber) and prepaid airport taxis are available 24/7 at the arrival terminal.
+            </p>
+            <p class="u-no-margin--bottom"><small class="u-text--muted">Travel time: ~45&ndash;60 mins</small></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Train / Metro -->
+      <div class="col-4 col-medium-2 col-small-4">
+        <div class="p-card">
+          <div class="p-card__inner">
+            <h3 class="p-heading--4">
+              <i class="p-icon--machines"></i> Metro & Rail
+            </h3>
+            <p class="u-text--muted">
+              Nearest Railway Junction & Metro Line. Feeder buses and shared e-rickshaws connect the station exit directly to the campus main gate.
+            </p>
+            <p class="u-no-margin--bottom"><small class="u-text--muted">Travel time: ~15&ndash;25 mins</small></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Road / Cabs -->
+      <div class="col-4 col-medium-2 col-small-4">
+        <div class="p-card">
+          <div class="p-card__inner">
+            <h3 class="p-heading--4">
+              <i class="p-icon--pin"></i> Road & Parking
+            </h3>
+            <p class="u-text--muted">
+              Designated attendee drop-off zone at Gate 1. Limited on-campus visitor parking is available on a first-come, first-served basis.
+            </p>
+            <p class="u-no-margin--bottom"><small class="u-text--muted">Entry via Main Security Gate</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- On-Site Amenities & Facilities -->
+  <section class="p-strip">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="p-heading--3">On-Site Facilities</h2>
+        <p class="p-muted-heading">Attendee amenities across the venue</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-3 col-medium-3 col-small-4">
+        <h3 class="p-heading--5">
+          <i class="p-icon--user"></i> Welcome Desk
+        </h3>
+        <p class="u-text--muted">
+          Lobby registration, physical badge issuance, and information desk managed by community volunteers.
+        </p>
+      </div>
+
+      <div class="col-3 col-medium-3 col-small-4">
+        <h3 class="p-heading--5">
+          <i class="p-icon--applications"></i> Conference Wi-Fi
+        </h3>
+        <p class="u-text--muted">
+          High-speed wireless internet available across all session halls, auditoriums, and workshop labs.
+        </p>
+      </div>
+
+      <div class="col-3 col-medium-3 col-small-4">
+        <h3 class="p-heading--5">
+          <i class="p-icon--units"></i> Dining & Breaks
+        </h3>
+        <p class="u-text--muted">
+          Buffet lunch, continuous water stations, morning tea, and evening refreshments for registered badge holders.
+        </p>
+      </div>
+
+      <div class="col-3 col-medium-3 col-small-4">
+        <h3 class="p-heading--5">
+          <i class="p-icon--help"></i> Accessibility
+        </h3>
+        <p class="u-text--muted">
+          Step-free ramp access, passenger elevators, and reserved seating for attendees with mobility requirements.
+        </p>
+      </div>
+    </div>
+
+    <div class="row u-sv2">
+      <div class="col-12">
+        <div class="p-notification--information">
+          <div class="p-notification__content">
+            <h5 class="p-notification__title">Community & Safety</h5>
+            <p class="p-notification__message">
+              UbuCon India is dedicated to providing a welcoming experience for everyone. All participants must follow the official <a href="https://ubuntu.com/community/code-of-conduct" target="_blank" rel="noopener noreferrer">Ubuntu Code of Conduct</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </Base>
