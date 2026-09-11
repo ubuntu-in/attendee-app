@@ -4,11 +4,116 @@
  * @description The venue page for the UbuCon India 2026 Attendee App.
  */
 import Base from '../layouts/Base.astro';
+
+const venue = {
+  name: 'BMS College of Engineering',
+  address: 'Bull Temple Rd, Basavanagudi, Bengaluru, Karnataka 560004',
+  city: 'Bengaluru, India',
+  startDate: new Date('2026-11-14'),
+  endDate: new Date('2026-11-15'),
+  mapEmbed:
+    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.4720098421913!2d77.56422961107282!3d12.941620315481376!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae158b11e34d2f%3A0x5f4adbdbab8bd80f!2sBMS%20College%20of%20Engineering!5e0!3m2!1sen!2sin!4v1784802109426!5m2!1sen!2sin',
+  gettingThere: [
+    {
+      title: 'By Metro',
+      body: 'The nearest metro station is National College (Green Line), ~1.9 km away. A short auto ride or 15-minute walk will get you to campus.',
+    },
+    {
+      title: 'By Air',
+      body: 'Kempegowda International Airport (BLR) is ~40 km away. You can take a Vayu Vajra airport bus or a taxi directly to the venue.',
+    },
+    {
+      title: 'By Train',
+      body: 'KSR Bengaluru City Railway Station (Majestic) is ~5 km away. From there, you can switch to the Green Line metro or take a taxi.',
+    },
+  ],
+};
+
+const dateRange = `${venue.startDate.getDate()} - ${venue.endDate.getDate()} ${venue.endDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}`;
+
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  `${venue.name}, ${venue.city}`,
+)}`;
 ---
 
 <Base title="Venue">
   <div class="col-12">
-    <h1>Venue Information</h1>
-    <p>Venue details coming soon...</p>
+    <h1 style="font-weight: 800;">Venue</h1>
+    <p>
+      Join us in {venue.city.replace(/,.*$/, '')} for two days of talks,
+      workshops and community. Here's how to reach the venue.
+    </p>
+  </div>
+
+  <div class="col-12">
+    <div class="row u-no-padding">
+      <div
+        class="col-7"
+        style="min-height: 360px; background: var(--vf-color-background-alt, #f2f2f2); display: grid; place-items: center;"
+      >
+        <iframe
+          src={venue.mapEmbed}
+          title={`Map of ${venue.name}`}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+          style="width: 100%; height: 100%; min-height: 360px; border: 0;"
+        />
+      </div>
+
+      <div class="col-5 p-card" style="display: flex; flex-direction: column;">
+        {/* #772953 is aubergine, mirroring $color-primary in src/styles/global.scss */}
+        <h2
+          class="p-heading--4"
+          style="display: flex; align-items: center; gap: 0.5rem; color: #772953;"
+        >
+          <svg
+            viewBox="0 0 16 16"
+            width="26"
+            height="26"
+            aria-hidden="true"
+            style="flex-shrink: 0; fill: var(--vf-color-accent, #e95420);"
+          >
+            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+          </svg>
+          {venue.name}
+        </h2>
+        <p class="u-text--muted">{venue.address}</p>
+        <p style="color: var(--vf-color-accent, #e95420);">{dateRange}</p>
+        <a
+          class="p-button--positive"
+          href={mapsUrl}
+          rel="noopener"
+          target="_blank"
+          style="margin-top: auto; text-align: center; --vf-color-button-positive-default: #0e8420; --vf-color-button-positive-hover: #0c701b; --vf-color-button-positive-active: #0a5c16;"
+        >
+          Get directions
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <h2 class="p-heading--4" style="font-weight: 700;">Getting there</h2>
+    <div class="p-accordion">
+      {
+        venue.gettingThere.map((g, i) => (
+          <details class="p-accordion__group" open={i === 0}>
+            <summary class="p-accordion__tab">{g.title}</summary>
+            <section class="p-accordion__panel u-no-margin--bottom">
+              <p>{g.body}</p>
+            </section>
+          </details>
+        ))
+      }
+    </div>
   </div>
 </Base>
+
+<style>
+  /* Vanilla styles .p-accordion__tab as a <button> with aria-expanded; on a
+     native <details> the chevron has to be flipped from the open state. */
+  details:not([open]) > .p-accordion__tab::before {
+    transform: rotate(-90deg);
+  }
+</style>
