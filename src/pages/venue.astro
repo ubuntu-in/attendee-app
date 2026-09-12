@@ -29,7 +29,7 @@ const venue = {
   ],
 };
 
-const dateRange = `${venue.startDate.getDate()} - ${venue.endDate.getDate()} ${venue.endDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}`;
+const dateRange = `${venue.startDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })} \u2013 ${venue.endDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}`;
 
 const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
   `${venue.name}, ${venue.city}`,
@@ -38,54 +38,50 @@ const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComp
 
 <Base title="Venue">
   <div class="col-12">
-    <h1 style="font-weight: 800;">Venue</h1>
+    <h1 class="venue-title">Venue</h1>
     <p>
       Join us in {venue.city.replace(/,.*$/, '')} for two days of talks,
-      workshops and community. Here's how to reach the venue.
+      workshops and community. Here&rsquo;s how to reach the venue.
     </p>
   </div>
 
   <div class="col-12">
     <div class="row u-no-padding">
-      <div
-        class="col-7"
-        style="min-height: 360px; background: var(--vf-color-background-alt, #f2f2f2); display: grid; place-items: center;"
-      >
+      <div class="col-7 col-medium-6 col-small-4 venue-map-wrapper">
         <iframe
           src={venue.mapEmbed}
           title={`Map of ${venue.name}`}
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
           allowfullscreen
-          style="width: 100%; height: 100%; min-height: 360px; border: 0;"
+          class="venue-map"
         />
       </div>
 
-      <div class="col-5 p-card" style="display: flex; flex-direction: column;">
-        {/* #772953 is aubergine, mirroring $color-primary in src/styles/global.scss */}
-        <h2
-          class="p-heading--4"
-          style="display: flex; align-items: center; gap: 0.5rem; color: #772953;"
-        >
+      <div class="col-5 col-medium-6 col-small-4 p-card venue-info-card">
+        <h2 class="p-heading--4 venue-name">
           <svg
             viewBox="0 0 16 16"
             width="26"
             height="26"
             aria-hidden="true"
-            style="flex-shrink: 0; fill: var(--vf-color-accent, #e95420);"
+            class="venue-pin-icon"
           >
             <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
           </svg>
           {venue.name}
         </h2>
         <p class="u-text--muted">{venue.address}</p>
-        <p style="color: var(--vf-color-accent, #e95420);">{dateRange}</p>
+        <p class="venue-dates">{dateRange}</p>
+        {/* Darker green for better contrast against the white card background;
+            the global $color-positive (#38B44A) is lighter and intended for
+            success badges / toasts, not primary CTA buttons. */}
         <a
-          class="p-button--positive"
+          class="p-button--positive venue-directions-btn"
           href={mapsUrl}
           rel="noopener"
           target="_blank"
-          style="margin-top: auto; text-align: center; --vf-color-button-positive-default: #0e8420; --vf-color-button-positive-hover: #0c701b; --vf-color-button-positive-active: #0a5c16;"
+          role="button"
         >
           Get directions
         </a>
@@ -94,7 +90,7 @@ const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComp
   </div>
 
   <div class="col-12">
-    <h2 class="p-heading--4" style="font-weight: 700;">Getting there</h2>
+    <h2 class="p-heading--4 venue-section-heading">Getting there</h2>
     <div class="p-accordion">
       {
         venue.gettingThere.map((g, i) => (
@@ -111,6 +107,65 @@ const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComp
 </Base>
 
 <style>
+  /* ── Page heading ───────────────────────────────────────────── */
+  .venue-title {
+    font-weight: 800;
+  }
+
+  /* ── Map / info-card row ────────────────────────────────────── */
+  .venue-map-wrapper {
+    min-height: 360px;
+    background: var(--vf-color-background-alt, #f2f2f2);
+    display: grid;
+    place-items: center;
+  }
+
+  .venue-map {
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    border: 0;
+  }
+
+  .venue-info-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Aubergine — mirrors $color-primary in src/styles/global.scss */
+  .venue-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--vf-color-primary, #772953);
+  }
+
+  /* Ubuntu orange pin icon */
+  .venue-pin-icon {
+    flex-shrink: 0;
+    fill: var(--vf-color-accent, #e95420);
+  }
+
+  .venue-dates {
+    color: var(--vf-color-accent, #e95420);
+  }
+
+  /* Darker green for better contrast on a white card;
+     the global $color-positive (#38B44A) is lighter and meant for
+     success badges / toasts, not primary CTA buttons. */
+  .venue-directions-btn {
+    margin-top: auto;
+    text-align: center;
+    --vf-color-button-positive-default: #0e8420;
+    --vf-color-button-positive-hover: #0c701b;
+    --vf-color-button-positive-active: #0a5c16;
+  }
+
+  /* ── Getting there section ──────────────────────────────────── */
+  .venue-section-heading {
+    font-weight: 700;
+  }
+
   /* Vanilla styles .p-accordion__tab as a <button> with aria-expanded; on a
      native <details> the chevron has to be flipped from the open state. */
   details:not([open]) > .p-accordion__tab::before {
