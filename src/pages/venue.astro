@@ -4,11 +4,85 @@
  * @description The venue page for the UbuCon India 2026 Attendee App.
  */
 import Base from '../layouts/Base.astro';
+
+const venue = {
+  name: 'BMS College of Engineering',
+  address: 'Bull Temple Rd, Basavanagudi, Bengaluru, Karnataka 560004',
+  city: 'Bengaluru, India',
+  startDate: new Date('2026-11-14'),
+  endDate: new Date('2026-11-15'),
+  mapEmbed:
+    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.4720098421913!2d77.56422961107282!3d12.941620315481376!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae158b11e34d2f%3A0x5f4adbdbab8bd80f!2sBMS%20College%20of%20Engineering!5e0!3m2!1sen!2sin!4v1784802109426!5m2!1sen!2sin',
+  gettingThere: [
+    {
+      title: 'By Metro',
+      body: 'The nearest metro station is National College (Green Line), ~1.9 km away. A short auto ride or 15-minute walk will get you to campus.',
+    },
+    {
+      title: 'By Air',
+      body: 'Kempegowda International Airport (BLR) is ~40 km away. You can take a Vayu Vajra airport bus or a taxi directly to the venue.',
+    },
+    {
+      title: 'By Train',
+      body: 'KSR Bengaluru City Railway Station (Majestic) is ~5 km away. From there, you can switch to the Green Line metro or take a taxi.',
+    },
+  ],
+};
+
+const dateRange = `${venue.startDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })} \u2013 ${venue.endDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  `${venue.name}, ${venue.city}`,
+)}`;
 ---
 
 <Base title="Venue">
   <div class="col-12">
-    <h1>Venue Information</h1>
-    <p>Venue details coming soon...</p>
+    <h1>Venue</h1>
+    <p>
+      Join us in {venue.city.replace(/,.*$/, '')} for two days of talks,
+      workshops and community. Here&rsquo;s how to reach the venue.
+    </p>
   </div>
+
+  <section class="col-5" aria-labelledby="venue-name">
+    <h2 id="venue-name" class="p-heading--4">{venue.name}</h2>
+    <p>{venue.address}</p>
+    <p>{dateRange}</p>
+    <a
+      class="p-button--positive"
+      href={mapsUrl}
+      rel="noopener"
+      target="_blank"
+    >
+      Get directions
+    </a>
+  </section>
+
+  <div class="col-7">
+    <div class="u-embedded-media">
+      <iframe
+        class="u-embedded-media__element"
+        src={venue.mapEmbed}
+        title={`Map of ${venue.name}`}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      />
+    </div>
+  </div>
+
+  <section class="col-12" aria-labelledby="getting-there">
+    <h2 id="getting-there" class="p-heading--4">Getting there</h2>
+    <ul class="p-list--divided">
+      {
+        venue.gettingThere.map(({ title, body }) => (
+          <li class="p-list__item">
+            <h3 class="p-heading--5">{title}</h3>
+            <p>{body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 </Base>
