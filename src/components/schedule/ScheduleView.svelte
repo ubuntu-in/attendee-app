@@ -1,28 +1,33 @@
 <script lang="ts">
-  import { scheduleStore } from '../../lib/schedule.svelte.js';
+  import { onMount } from 'svelte';
+  import { scheduleStore, bookmarksStore } from '../../lib/schedule.svelte.js';
   import { formatDateLabel } from '../../lib/indico.js';
   import { EVENT_CONFIG } from '../../config.js';
   import ScheduleDay from './ScheduleDay.svelte';
 
   const indicoTimetableUrl = `${EVENT_CONFIG.indicoBaseUrl}/event/${EVENT_CONFIG.indicoId}/timetable/`;
 
-  $effect(() => {
-    scheduleStore.load();
+  onMount(() => {
+    bookmarksStore.init();
+    void scheduleStore.load();
   });
 
-  let activeDay = $state<string | null>(null);
-
-  $effect(() => {
-    if (
-      scheduleStore.status === 'success' &&
-      scheduleStore.sessionsByDay.size > 0 &&
-      activeDay === null
-    ) {
-      activeDay = [...scheduleStore.sessionsByDay.keys()][0];
-    }
-  });
+  let selectedDay = $state<string | null>(null);
+  let filterBookmarksOnly = $state(false);
 
   const dayKeys = $derived([...scheduleStore.sessionsByDay.keys()]);
+  const activeDay = $derived(
+    selectedDay && dayKeys.includes(selectedDay) ? selectedDay : dayKeys[0] ?? null
+  );
+  const currentDaySessions = $derived(
+    activeDay ? (scheduleStore.sessionsByDay.get(activeDay) ?? []) : []
+  );
+  const bookmarkedSessions = $derived(
+    currentDaySessions.filter((session) => !session.isBreak && bookmarksStore.has(session.id))
+  );
+  const displayedSessions = $derived(
+    filterBookmarksOnly ? bookmarkedSessions : currentDaySessions
+  );
 
   function handleTabKeydown(event: KeyboardEvent, day: string): void {
     const idx = dayKeys.indexOf(day);
@@ -37,12 +42,23 @@
       targetDay = dayKeys[dayKeys.length - 1];
     }
     if (targetDay) {
-      activeDay = targetDay;
+      selectedDay = targetDay;
       document.getElementById(`schedule-tab-${targetDay}`)?.focus();
       event.preventDefault();
     }
   }
 </script>
+
+<p>
+  <a
+    href={indicoTimetableUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="p-button"
+  >
+    View Timetable on Indico
+  </a>
+</p>
 
 {#if scheduleStore.status === 'idle' || scheduleStore.status === 'loading'}
   <div role="status" aria-live="polite" aria-label="Loading schedule" class="u-align--center">
@@ -58,19 +74,11 @@
         {scheduleStore.errorMessage ?? 'An unexpected error occurred.'}
       </p>
       <p class="p-notification__message u-no-margin--bottom">
-        You can still view the full event schedule directly on Indico:
+        You can also use the Indico timetable link above to view the full schedule.
       </p>
     </div>
   </div>
   <div class="u-sv1">
-    <a
-      href={indicoTimetableUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="p-button--positive"
-    >
-      View Timetable on Indico
-    </a>
     <button
       class="p-button"
       onclick={() => scheduleStore.load()}
@@ -86,16 +94,6 @@
       Session details for {EVENT_CONFIG.name} will be announced closer to the
       event.
     </p>
-    <p>
-      <a
-        href={indicoTimetableUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="p-button"
-      >
-        Check Official Indico Timetable
-      </a>
-    </p>
   </div>
 
 {:else if scheduleStore.status === 'success'}
@@ -110,7 +108,7 @@
             aria-selected={activeDay === day}
             aria-controls={`schedule-panel-${day}`}
             tabindex={activeDay === day ? 0 : -1}
-            onclick={() => { activeDay = day; }}
+            onclick={() => (selectedDay = day)}
             onkeydown={(e) => handleTabKeydown(e, day)}
           >
             Day {i + 1}
@@ -127,7 +125,22 @@
       aria-labelledby={`schedule-tab-${activeDay}`}
     >
       <p><strong>{formatDateLabel(activeDay)}</strong></p>
-      <ScheduleDay sessions={scheduleStore.sessionsByDay.get(activeDay)!} />
+      <button
+        type="button"
+        class={filterBookmarksOnly ? 'p-button--positive' : 'p-button'}
+        onclick={() => (filterBookmarksOnly = !filterBookmarksOnly)}
+        aria-pressed={filterBookmarksOnly}
+      >
+        ★ My Bookmarks ({bookmarkedSessions.length})
+      </button>
+
+      {#if filterBookmarksOnly && bookmarkedSessions.length === 0}
+        <div class="u-align--center u-sv2">
+          <p class="u-text--muted">No bookmarked sessions for this day.</p>
+          <p class="p-text--small">Tap the star icon on any session to bookmark it.</p>
+        </div>
+      {/if}
+      <ScheduleDay sessions={displayedSessions} />
     </div>
   {/if}
 {/if}

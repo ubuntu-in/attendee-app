@@ -4,11 +4,88 @@
  * @description The primary landing page for the UbuCon India 2026 Attendee App.
  */
 import Base from '../layouts/Base.astro';
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <Base title="Home">
   <div class="col-12">
     <h1>Welcome to UbuCon India 2026</h1>
-    <p>The premier gathering of the Ubuntu community in India.</p>
+    <p>
+      Your official guide and companion app for the premier Ubuntu community
+      gathering in Bengaluru. Everything you need, right in your pocket.
+    </p>
+  </div>
+
+  <div class="col-12">
+    <div class="u-sv2">
+      <a href={`${base}schedule`} class="p-button--positive">View Schedule</a>
+      <a href={`${base}ticket`} class="p-button">My Ticket</a>
+      <a href={`${base}venue`} class="p-button">Venue</a>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <h2 class="p-heading--4">How to use this app</h2>
+  </div>
+
+  <div class="col-4">
+    <div class="p-card">
+      <h3 class="p-heading--4">Plan Your Day</h3>
+      <p>
+        Browse the full schedule of talks, workshops, and lightning rounds.
+        Bookmark your favorite sessions so you don't miss anything.
+      </p>
+      <p><a href={`${base}schedule`}>Go to schedule &rsaquo;</a></p>
+    </div>
+  </div>
+
+  <div class="col-4">
+    <div class="p-card">
+      <h3 class="p-heading--4">Fast Check-in</h3>
+      <p>
+        Access your ticket QR code instantly. Show it at the registration desk
+        for a seamless badge pickup experience.
+      </p>
+      <p><a href={`${base}ticket`}>View ticket &rsaquo;</a></p>
+    </div>
+  </div>
+
+  <div class="col-4">
+    <div class="p-card">
+      <h3 class="p-heading--4">Find Your Way</h3>
+      <p>
+        Find your way to BMS College of Engineering with directions by metro,
+        bus, train, or flight.
+      </p>
+      <p><a href={`${base}venue`}>Get directions &rsaquo;</a></p>
+    </div>
+  </div>
+
+  <div class="col-8">
+    <div class="p-card">
+      <h3 class="p-heading--4">Event Dashboard</h3>
+      <p class="u-text--muted">14 &ndash; 15 November 2026 &bull; BMS College of Engineering, Bengaluru</p>
+      <hr />
+      <h4 class="p-heading--5">Live Updates</h4>
+      <p>
+        During the event, check the schedule tab for live session timings,
+        room locations, and your saved bookmarks.
+      </p>
+    </div>
+  </div>
+
+  <div class="col-4">
+    <div class="p-card">
+      <h3 class="p-heading--4">Important Links</h3>
+      <ul class="p-list">
+        <li class="p-list__item">
+          <a href="https://in.ubucon.org" target="_blank" rel="noopener noreferrer">Official Website</a>
+        </li>
+        <li class="p-list__item">
+          <a href="https://events.canonical.com/event/157/" target="_blank" rel="noopener noreferrer">Official Indico Page</a>
+        </li>
+      </ul>
+    </div>
   </div>
 </Base>

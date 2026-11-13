@@ -120,7 +120,7 @@
         <li>Open your registration confirmation email from KonfHub.</li>
         <li>Save the QR code image to your device.</li>
         <li>Tap <strong>Scan QR code</strong> above and select the image.</li>
-        <li>Your ticket is saved offline on this device.</li>
+        <li>Your ticket is saved on this device.</li>
       </ol>
     </div>
   {/if}

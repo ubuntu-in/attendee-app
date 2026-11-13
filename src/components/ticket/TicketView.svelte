@@ -17,7 +17,17 @@
   let phase = $state<Phase>('checking');
   let logoSvg = $state<string | undefined>();
   let isStandalone = $state(false);
-  let qrSvg = $derived(ticket ? buildQrSvg(ticket, logoSvg) : '');
+  const qrSvg = $derived(ticket ? buildQrSvg(ticket, logoSvg) : '');
+
+  function cleanField(value: unknown): string {
+    const trimmed = typeof value === 'string' ? value.trim() : '';
+    return /^(n\/?a|none|-)$/i.test(trimmed) ? '' : trimmed;
+  }
+
+  const roleAndOrg = $derived(
+    [cleanField(ticket?.attendee.designation), cleanField(ticket?.attendee.organisation)]
+      .filter(Boolean).join(' at ')
+  );
 
   onMount(async () => {
     isStandalone = window.matchMedia('(display-mode: standalone)').matches
@@ -50,7 +60,7 @@
       dotType: 'classy',
       corners: { topLeft: eye, topRight: eye, bottomLeft: eye },
       logo: logo
-        ? { svg: logo, size: 0.22, margin: 4}
+        ? { svg: logo, size: 0.22, margin: 4 }
         : undefined,
       ariaLabel: 'Ticket QR code',
     });
@@ -64,7 +74,7 @@
 
 {#if phase === 'checking'}
   <div class="u-align-text--center" role="status" aria-label="Loading ticket">
-    <i class="p-icon--spinner u-animation--spin" style="font-size: 2rem;"></i>
+    <i class="p-icon--spinner u-animation--spin"></i>
   </div>
 {:else if ticket}
   <div class="p-card--highlighted">
@@ -72,23 +82,36 @@
       <div class="u-sv2">{@html qrSvg}</div>
 
       <h1 class="p-heading--3 u-no-margin--bottom">{ticket.attendee.name}</h1>
-      <p class="p-heading--5 u-text--muted">{ticket.attendee.ticketName || 'Attendee Pass'}</p>
-      {#if ticket.attendee.designation || ticket.attendee.organisation}
-        <p class="u-text--muted">
-          {ticket.attendee.designation || ''}{#if ticket.attendee.designation && ticket.attendee.organisation}{' at '}{/if}{ticket.attendee.organisation || ''}
-        </p>
+      <p>
+        <span class="p-chip">
+          <span class="p-chip__value">{ticket.attendee.ticketName || 'Attendee Pass'}</span>
+        </span>
+      </p>
+      {#if roleAndOrg}
+        <p class="u-text--muted">{roleAndOrg}</p>
       {/if}
 
       {#if phase === 'view'}
         <p class="u-sv2">
-          <button class="p-button--positive has-icon" type="button" onclick={() => window.location.assign(`${base}ticket/add`)}
-            aria-label="Replace ticket" title="Replace ticket">
+          <button
+            class="p-button--positive has-icon"
+            type="button"
+            onclick={() => window.location.assign(`${base}ticket/add`)}
+            aria-label="Replace ticket"
+            title="Replace ticket"
+          >
             <i class="p-icon--edit is-dark"></i>
             <span>Replace</span>
           </button>
-          <button class="p-button--negative has-icon" type="button" onclick={() => phase = 'confirmRemove'}
-            aria-label="Remove ticket" title="Remove ticket">
+          <button
+            class="p-button--negative has-icon"
+            type="button"
+            onclick={() => (phase = 'confirmRemove')}
+            aria-label="Remove ticket"
+            title="Remove ticket"
+          >
             <i class="p-icon--delete is-dark"></i>
+            <span>Remove</span>
           </button>
         </p>
       {/if}

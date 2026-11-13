@@ -6,6 +6,7 @@ export interface IndicoSession {
   id: string;
   title: string;
   speakers: string[];
+  isBreak?: boolean;
   track?: string;
   room?: string;
   start: Date;
@@ -19,9 +20,25 @@ interface IndicoDateTime {
   tz?: string;
 }
 
-function toDate(d?: IndicoDateTime): Date | null {
+interface IndicoEntry extends Record<string, unknown> {
+  speakers?: Record<string, unknown>[];
+  startDate?: IndicoDateTime | null;
+  endDate?: IndicoDateTime | null;
+}
+
+interface IndicoEventExport {
+  results?: { contributions?: IndicoEntry[] }[];
+}
+
+interface IndicoTimetableExport {
+  results?: Record<string, Record<string, Record<string, IndicoEntry>>>;
+}
+
+function toDate(d?: IndicoDateTime | null): Date | null {
   if (!d?.date || !d?.time) return null;
-  const dt = new Date(`${d.date}T${d.time}Z`);
+  // Event metadata is UTC; timetable entries use the event's local timezone.
+  const offset = d.tz === EVENT_TIMEZONE ? '+05:30' : 'Z';
+  const dt = new Date(`${d.date}T${d.time}${offset}`);
   return Number.isNaN(dt.getTime()) ? null : dt;
 }
 
@@ -32,17 +49,14 @@ function speakerName(s: Record<string, unknown>): string {
   return joined || (typeof s.fullName === 'string' ? s.fullName.trim() : '');
 }
 
-/**
- * Fetches contributions from the Indico export API and normalises them.
- */
-export async function fetchSchedule(eventId: number): Promise<IndicoSession[]> {
-  const url = `/api/schedule`;
+async function fetchExport<T>(timetable = false): Promise<T> {
+  const url = `${import.meta.env.BASE_URL}api/${timetable ? 'timetable' : 'schedule'}`;
 
   const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
   if (!res.ok) {
     let message = `Failed to fetch schedule from Indico (HTTP ${res.status})`;
     try {
-      const body = await res.json() as { error?: string };
+      const body = (await res.json()) as { error?: string };
       if (body.error) message = body.error;
     } catch {
       // ignore malformed error body and keep the generic HTTP message
@@ -50,15 +64,33 @@ export async function fetchSchedule(eventId: number): Promise<IndicoSession[]> {
     throw new Error(message);
   }
 
-  const json = await res.json() as Record<string, unknown>;
+  return (await res.json()) as T;
+}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const contribs: any[] = (json?.results as any[])?.[0]?.contributions ?? [];
+/** Fetches talks and non-talk timetable entries, sorted together by start time. */
+export async function fetchSchedule(eventId: number): Promise<IndicoSession[]> {
+  const [event, timetable] = await Promise.all([
+    fetchExport<IndicoEventExport>(),
+    fetchExport<IndicoTimetableExport>(true),
+  ]);
+  const timetableDays = timetable.results?.[String(eventId)];
+  if (!timetableDays) {
+    throw new Error('The timetable response is missing event data. Please try again.');
+  }
+  const breaks = Object.values(timetableDays).flatMap((day) => Object.entries(day)
+    .filter(([, entry]) => entry.entryType === 'Break')
+    .map(([id, entry]) => ({
+      ...entry,
+      id: `break:${id}`,
+      url: `${EVENT_CONFIG.indicoBaseUrl}/event/${eventId}/timetable/`,
+    }))
+  );
+  const entries: IndicoEntry[] = [...(event.results?.[0]?.contributions ?? []), ...breaks];
   const sessions: IndicoSession[] = [];
 
-  for (const [index, c] of contribs.entries()) {
-    const start = toDate(c.startDate as IndicoDateTime | undefined);
-    const end = toDate(c.endDate as IndicoDateTime | undefined);
+  for (const [index, c] of entries.entries()) {
+    const start = toDate(c.startDate);
+    const end = toDate(c.endDate);
     if (!start || !end) continue;
 
     const speakerList: Record<string, unknown>[] = Array.isArray(c.speakers) ? c.speakers : [];
@@ -68,10 +100,14 @@ export async function fetchSchedule(eventId: number): Promise<IndicoSession[]> {
       id: String(c.id ?? c.db_id ?? index).trim() || String(index),
       title: String(c.title ?? '').trim(),
       speakers: speakerList.map(speakerName).filter(Boolean),
+      isBreak: c.entryType === 'Break',
       track: typeof c.track === 'string' && c.track ? c.track : undefined,
-      room: (typeof c.roomFullname === 'string' && c.roomFullname)
-        ? c.roomFullname
-        : (typeof c.room === 'string' && c.room ? c.room : undefined),
+      room:
+        typeof c.roomFullname === 'string' && c.roomFullname
+          ? c.roomFullname
+          : typeof c.room === 'string' && c.room
+            ? c.room
+            : undefined,
       start,
       end,
       indicoUrl: typeof c.url === 'string' && c.url ? c.url : fallbackUrl,
